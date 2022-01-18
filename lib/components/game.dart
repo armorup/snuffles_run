@@ -34,9 +34,12 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     await add(ground);
     add(ScoreText());
     add(snuffles);
+
+    // To put spawner off the screen
+    const offset = 20;
     add(
       ObstacleSpawner(
-        position: Vector2(size.x / 2, 140),
+        position: Vector2(size.x + offset, ground.y),
       ),
     );
     restart();
@@ -44,8 +47,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   @override
   void update(double dt) {
-    // Spawn obstacle
-
     // Increase the score
     score += dt;
     super.update(dt);
@@ -61,12 +62,14 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   // TODO: restart the game
   void restart() {
     GameState.playState = PlayState.playing;
+    resumeEngine();
     score = 0;
   }
 
   /// Called when game is over
   void gameOver() {
     GameState.playState = PlayState.lost;
+    pauseEngine();
     overlays.add('pause');
   }
 }
