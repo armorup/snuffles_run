@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:snuffles_run/components/game.dart';
 
+/// The score text to show on screen
 class ScoreText extends TextComponent with HasGameRef<SnufflesGame> {
   final _textRenderer = TextPaint(
     style: const TextStyle(
