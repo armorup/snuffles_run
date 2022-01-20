@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:snuffles_run/components/game.dart';
+import 'package:snuffles_run/game.dart';
 
 /// Display score on screen
 class ScoreText extends TextComponent with HasGameRef<SnufflesGame> {

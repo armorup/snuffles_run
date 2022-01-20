@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:snuffles_run/components/game.dart';
+import 'package:snuffles_run/game.dart';
 
 import '../game_state.dart';
 

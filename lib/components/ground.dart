@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
-import 'package:snuffles_run/components/game.dart';
+import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/components/obstacle.dart';
 

@@ -2,14 +2,54 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
+import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/ground.dart';
 import 'package:snuffles_run/components/obstacle_spawner.dart';
 import 'package:snuffles_run/components/score_text.dart';
 import 'package:snuffles_run/components/snuffles.dart';
+import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game_state.dart';
+import 'package:snuffles_run/widgets/pause_menu.dart';
 
-import 'background.dart';
+import 'components/background.dart';
+
+SnufflesGame game = SnufflesGame();
+
+class GamePlay extends StatelessWidget {
+  const GamePlay({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: GameWidget(
+        game: game,
+        //Work in progress loading screen on game start
+        loadingBuilder: (context) => const Material(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        //Work in progress error handling
+        errorBuilder: (context, ex) {
+          //Print the error in th dev console
+          debugPrint(ex.toString());
+
+          return const Material(
+            child: Center(
+              child: Text('Sorry, something went wrong. Reload me'),
+            ),
+          );
+        },
+        overlayBuilderMap: {
+          'pause': (context, SnufflesGame game) => PauseMenu(game: game),
+        },
+      ),
+    );
+  }
+}
 
 /// The main character is a bunny
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
@@ -29,19 +69,18 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     );
 
     // Add background first
-    await add(Background());
+    await add(Background(Data.scene));
     final ground = Ground();
     await add(ground);
     add(ScoreText());
     add(snuffles);
 
-    // To put spawner off the screen
-    const offset = 20;
-    add(
-      ObstacleSpawner(
-        position: Vector2(size.x + offset, ground.y),
-      ),
-    );
+    final spawner = ObstacleSpawner()
+      ..position = Vector2(size.x + 20, ground.y);
+    add(spawner);
+
+    add(GameText('Let\'s Go!'));
+
     restart();
   }
 
@@ -49,6 +88,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   void update(double dt) {
     // Increase the score
     score += dt;
+
     super.update(dt);
   }
 
@@ -59,7 +99,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     }
   }
 
-  // TODO: restart the game
   void restart() {
     GameState.playState = PlayState.playing;
     resumeEngine();

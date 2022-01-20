@@ -14,6 +14,7 @@ dependencies:
   flame_rive: ^1.0.0
   flutter:
     sdk: flutter
+  google_fonts: ^2.2.0
   rive: ^0.7.30
 
 dev_dependencies:
@@ -25,5 +26,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/images/background/
-    - assets/images/forest_background/
+    - assets/images/outdoor/
+    - assets/images/forest/

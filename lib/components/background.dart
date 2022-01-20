@@ -1,24 +1,18 @@
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
-import 'package:snuffles_run/components/game.dart';
+import 'package:snuffles_run/game.dart';
+import 'package:snuffles_run/data.dart';
 
 class Background extends ParallaxComponent<SnufflesGame> {
-  Vector2 _baseVelocity = Vector2(10, 0);
-  final _velocityMultiplierDelta = Vector2(1.8, 0);
-  late ParallaxComponent<FlameGame> background;
+  Background.forTesting() {
+    scene = SceneType.outdoor;
+  }
 
-  // The parallax list should always show the ground and sky
-  final ground = ParallaxImageData('background/_01_ground.png');
-  final sky = ParallaxImageData('background/_11_background.png');
-  List<String> imageStrings = [
-    'background/_02_trees and bushes.png',
-    'background/_03_distant_trees.png',
-    'background/_04_bushes.png',
-    'background/_05_hill1.png',
-    'background/_08_clouds.png',
-    'background/_10_distant_clouds.png',
-  ];
+  Background(this.scene);
+  late final SceneType scene;
+
+  final Vector2 _baseVelocity = Vector2(10, 0);
+  final _velocityMultiplierDelta = Vector2(1.8, 0);
 
   List<ParallaxImageData> imageData = [];
   List<ParallaxImageData> currentImages = [];
@@ -26,13 +20,18 @@ class Background extends ParallaxComponent<SnufflesGame> {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
     // Load all parallax layers into cache
-    imageData = imageStrings.map((e) => ParallaxImageData(e)).toList();
+    String folder = scene.toString().split('.').last;
+    imageData = Data.bgFilenames[scene]!
+        .map((e) => ParallaxImageData('$folder/$e'))
+        .toList();
 
     // Add the ground and sky
-    currentImages.add(sky);
-    currentImages.add(ground);
-
+    currentImages.add(imageData.last);
+    currentImages.add(imageData.first);
+    addParallaxLayer();
+    addParallaxLayer();
     addParallaxLayer();
     addParallaxLayer();
     addParallaxLayer();
@@ -45,10 +44,14 @@ class Background extends ParallaxComponent<SnufflesGame> {
 
   // Add next parallax layer
   void addParallaxLayer() {
+    if (currentImages.length == imageData.length) return;
+
+    // There should be at minimum 2 layers, ground and sky
+    assert(currentImages.length >= 2);
     final length = currentImages.length - 2;
 
     currentImages = currentImages.reversed.toList();
-    // remove the first an last images from current parallax
+    // remove the last image which is the sky from current parallax
     final sky = currentImages.removeLast();
     currentImages.add(imageData[length]);
     currentImages.add(sky);
@@ -58,15 +61,16 @@ class Background extends ParallaxComponent<SnufflesGame> {
   // Return true if background is scrolling
   bool _isScrolling() {
     if (parallax == null) return false;
-    return background.parallax!.baseVelocity != Vector2.zero();
+
+    return parallax!.baseVelocity != Vector2.zero();
   }
 
   /// Pause or play parallax
   void toggleParallax() {
     if (_isScrolling()) {
-      background.parallax!.baseVelocity = Vector2.zero();
+      parallax!.baseVelocity = Vector2.zero();
     } else {
-      background.parallax!.baseVelocity = _baseVelocity;
+      parallax!.baseVelocity = _baseVelocity;
     }
   }
 }

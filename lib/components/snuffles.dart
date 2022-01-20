@@ -2,7 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:rive/rive.dart';
-import 'package:snuffles_run/components/game.dart';
+import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/ground.dart';
 
 enum PlayerState { idle, jumping, running }

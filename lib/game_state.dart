@@ -1,10 +1,10 @@
 /// Describes the current state of the game.
-enum PlayState { paused, playing, lost, won }
+enum PlayState { paused, playing, lost, won, loading }
 
 /// State of the game to track global infomration.
 class GameState {
   /// Current playing state.
-  static PlayState playState = PlayState.playing;
+  static PlayState playState = PlayState.loading;
 
   /// Show or hide debug infromation of flame.
   static bool showDebugInfo = false;

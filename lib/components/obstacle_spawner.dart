@@ -1,13 +1,11 @@
 import 'package:flame/components.dart';
-import 'package:snuffles_run/components/game.dart';
+import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
 
 enum SpawnState { spawning, inactive, ready }
 
 /// A spawn point for game obstacles
 class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
-  ObstacleSpawner({required Vector2 position}) : super(position: position);
-
   SpawnState spawnState = SpawnState.inactive;
   double baseDelay = 5;
 
@@ -32,6 +30,12 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
       spawnObjects.add(SpawnObject(Obstacle(), delay));
     }
 
+    spawnState = SpawnState.ready;
+  }
+
+  /// A callback for the game when next level should begin
+  /// Spawn based on scene and level
+  void beginSpawning() {
     spawnState = SpawnState.ready;
   }
 
