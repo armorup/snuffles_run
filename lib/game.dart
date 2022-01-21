@@ -14,6 +14,7 @@ import 'package:snuffles_run/game_state.dart';
 import 'package:snuffles_run/widgets/pause_menu.dart';
 
 import 'components/background.dart';
+import 'components/obstacle.dart';
 
 SnufflesGame game = SnufflesGame();
 
@@ -53,8 +54,11 @@ class GamePlay extends StatelessWidget {
 
 /// The main character is a bunny
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  /// Reference to the bunny
+  // Reference to the bunny
   late SnufflesComponent snuffles;
+
+  // The main obstacle spawner
+  final spawner = ObstacleSpawner();
   double score = 0;
 
   @override
@@ -74,14 +78,17 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     await add(ground);
     add(ScoreText());
     add(snuffles);
-
-    final spawner = ObstacleSpawner()
-      ..position = Vector2(size.x + 20, ground.y);
+    spawner.position = Vector2(size.x + 20, ground.y);
     add(spawner);
 
     add(GameText('Let\'s Go!'));
 
-    restart();
+    start();
+  }
+
+  void start() {
+    GameState.playState = PlayState.playing;
+    spawner.start();
   }
 
   @override
@@ -97,6 +104,18 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     if (snuffles.playerState != PlayerState.jumping) {
       snuffles.jump();
     }
+  }
+
+  /// Called by obstacle when the level is finished
+  void onLevelComplete() {
+    add(GameText('Level Complete'));
+  }
+
+  /// Called by obstacle when wave is finished
+  void onWaveComplete() {
+    add(GameText('Wave Complete!'));
+    spawner.launcher.loadNextWave();
+    spawner.start();
   }
 
   void restart() {
