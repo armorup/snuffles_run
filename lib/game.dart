@@ -3,6 +3,7 @@ import 'package:flame/input.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/ground.dart';
@@ -12,11 +13,10 @@ import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game_state.dart';
 import 'package:snuffles_run/widgets/pause_menu.dart';
-
 import 'components/background.dart';
-import 'components/obstacle.dart';
 
-SnufflesGame game = SnufflesGame();
+// Single instance of game
+SnufflesGame _game = SnufflesGame();
 
 class GamePlay extends StatelessWidget {
   const GamePlay({Key? key}) : super(key: key);
@@ -26,7 +26,7 @@ class GamePlay extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async => false,
       child: GameWidget(
-        game: game,
+        game: _game,
         //Work in progress loading screen on game start
         loadingBuilder: (context) => const Material(
           child: Center(
@@ -52,9 +52,9 @@ class GamePlay extends StatelessWidget {
   }
 }
 
-/// The main character is a bunny
+/// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  // Reference to the bunny
+  // The bunny main hero
   late SnufflesComponent snuffles;
 
   // The main obstacle spawner
@@ -82,10 +82,10 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     add(spawner);
 
     add(GameText('Let\'s Go!'));
-
     start();
   }
 
+  /// Starts the game
   void start() {
     GameState.playState = PlayState.playing;
     spawner.start();

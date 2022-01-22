@@ -1,6 +1,6 @@
 import 'package:flame/flame.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
 
 void main() async {
@@ -9,12 +9,11 @@ void main() async {
   await Flame.device.fullScreen();
   runApp(
     MaterialApp(
-      themeMode: ThemeMode.light,
-      darkTheme: ThemeData.light().copyWith(
-        textTheme: GoogleFonts.bungeeInlineTextTheme(),
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: const MainMenu(),
+      title: 'Snuffles Run',
+      themeMode: ThemeMode.system,
+      theme: FlexThemeData.light(scheme: FlexScheme.mandyRed),
+      darkTheme: FlexThemeData.dark(scheme: FlexScheme.mandyRed),
+      home: App(),
     ),
   );
 }

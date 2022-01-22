@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
 

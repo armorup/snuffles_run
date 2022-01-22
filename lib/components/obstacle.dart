@@ -33,7 +33,7 @@ class Obstacle extends SpriteComponent
   @override
   Future<void> onLoad() async {
     // Load random stone sprite images
-    // TODO: Load images once in main game
+    // TODO: Load all game images once in main game
     var length = 5;
     var imageNames = <String>[];
     for (var i = 0; i < length; i++) {
@@ -62,7 +62,7 @@ class Obstacle extends SpriteComponent
     // move obstacle
     position += velocity * dt;
 
-    // TODO: how to get global coordinates?
+    // TODO: how to get global coordinates? Or create left edge collider
     var leftEdge = gameRef.size.x + gameRef.spawner.size.x;
     if (position.x < -leftEdge) {
       if (isLastInLevel) {
