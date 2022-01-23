@@ -66,8 +66,10 @@ class Obstacle extends SpriteComponent
     var leftEdge = gameRef.size.x + gameRef.spawner.size.x;
     if (position.x < -leftEdge) {
       if (isLastInLevel) {
+        isLastInLevel = false;
         gameRef.onLevelComplete();
       } else if (isLastInWave) {
+        isLastInWave = false;
         gameRef.onWaveComplete();
       }
     }

@@ -19,6 +19,6 @@ class GameText extends TextComponent with HasGameRef<SnufflesGame> {
     anchor = Anchor.center;
     position = Vector2(gameRef.size.x * 0.5, gameRef.size.y * 0.4);
 
-    add(RemoveEffect(delay: 3));
+    add(RemoveEffect(delay: 2));
   }
 }

@@ -3,7 +3,6 @@ import 'package:flame/input.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/ground.dart';

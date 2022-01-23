@@ -19,8 +19,12 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
 
     // List of delay times before each obstacle spawn as a fraction
     // of the base delay time
-    List<double> testWave = [0, 0.5, 0.9];
-    launcher.load(wave: testWave);
+    List<List<double>> testWaves = [
+      [0, 0.5, 0.5],
+      [0, 0.4, 0.3, 0.2],
+      [0, 0.2, 0.5, 0.3, 0.3, 0.2]
+    ];
+    launcher.loadAll(waves: testWaves);
     start();
   }
 
@@ -43,9 +47,6 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
       if (waveComplete) {
         spawnState = SpawnState.stopped;
       }
-      //   gameRef.add(GameText('Wave complete!'));
-      //   launcher.loadNextWave();
-      // }
     }
   }
 }
@@ -56,7 +57,7 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   });
 
   double delayMultiplier = 5;
-  List<List<Obstacle>> waves = [];
+  List<List<Obstacle>> curWaves = [];
   List<Obstacle> curWave = [];
   int waveNumber = 0;
 
@@ -67,7 +68,7 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
 
   // Load launcher with a single list of delays
   void load({required List<double> wave}) {
-    waves.add(wave
+    curWaves.add(wave
         .map(
           (delay) => Obstacle(delayFactor: delay),
         )
@@ -78,9 +79,9 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
 
   // Load launcher with several lists of delays representing
   // muliple waves of obstacles
-  void fullLoad({required List<List<double>> delays}) {
-    for (List<double> wave in delays) {
-      waves.add(
+  void loadAll({required List<List<double>> waves}) {
+    for (List<double> wave in waves) {
+      curWaves.add(
         wave
             .map(
               (delay) => Obstacle(delayFactor: delay),
@@ -98,9 +99,9 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   }
 
   void loadNextWave() {
-    if (waves.isEmpty) return;
+    if (curWaves.isEmpty) return;
     addLaunchDelay(waveDelay);
-    curWave.addAll(waves.removeAt(0));
+    curWave.addAll(curWaves.removeAt(0));
   }
 
   // Launch the obstacle returns true if the the wave is complete
@@ -109,8 +110,8 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
     if (timer > curWave.first.delayFactor * delayMultiplier) {
       // Spawn the obstacle
       var obs = curWave.removeAt(0);
-      obs.isLastInWave = curWave.isEmpty;
-      obs.isLastInLevel = curWave.isEmpty && waves.isEmpty;
+      obs.isLastInWave = curWave.isEmpty && curWaves.isNotEmpty;
+      obs.isLastInLevel = curWave.isEmpty && curWaves.isEmpty;
       add(obs);
       timer = 0;
     }
@@ -119,7 +120,7 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
 
   void reset() {
     waveNumber = 0;
-    waves.clear();
+    curWaves.clear();
     curWave.clear();
   }
 }

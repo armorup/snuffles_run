@@ -1,3 +1,4 @@
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/game.dart';
@@ -60,14 +61,20 @@ class MainMenu extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
-                onPressed: () => context.go('/game'),
+                onPressed: () {
+                  FlameAudio.play('Abstract1.mp3');
+                  context.go('/game');
+                },
                 child: const Text('Play'),
               ),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
-                onPressed: () => context.go('/options'),
+                onPressed: () {
+                  FlameAudio.play('Abstract2.mp3');
+                  context.go('/options');
+                },
                 child: const Text('Options'),
               ),
             ),
