@@ -1,7 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_rive/flame_rive.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/game_text.dart';
@@ -11,7 +11,8 @@ import 'package:snuffles_run/components/score_text.dart';
 import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game_state.dart';
-import 'package:snuffles_run/widgets/pause_menu.dart';
+import 'package:snuffles_run/screens/main_menu.dart';
+import 'package:snuffles_run/screens/pause_menu.dart';
 import 'components/background.dart';
 
 // Single instance of game
@@ -44,6 +45,7 @@ class GamePlay extends StatelessWidget {
           );
         },
         overlayBuilderMap: {
+          'main menu': (context, SnufflesGame game) => const MainMenu(),
           'pause': (context, SnufflesGame game) => PauseMenu(game: game),
         },
       ),
@@ -58,21 +60,22 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   // The main obstacle spawner
   final spawner = ObstacleSpawner();
+  var background = Background(Data.scene);
   double score = 0;
 
   @override
-  bool get debugMode => kDebugMode;
+  bool get debugMode => false;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
+    FlameAudio.audioCache.loadAll(['sfx/Abstract1.mp3', 'sfx/Abstract2.mp3']);
     snuffles = SnufflesComponent(
       await loadArtboard(RiveFile.asset('assets/images/snuffles.riv')),
     );
 
     // Add background first
-    await add(Background(Data.scene));
+    await add(background);
     final ground = Ground();
     await add(ground);
     add(ScoreText());
@@ -106,13 +109,20 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   }
 
   /// Called by obstacle when the level is finished
-  void onLevelComplete() {
+  void onLevelComplete() async {
     add(GameText('Level Complete'));
+    Data.scene = SceneType.forest;
+    background.loadScene(Data.scene);
+    await background.load();
+    spawner.loadTestWaves();
+    spawner.start();
   }
 
   /// Called by obstacle when wave is finished
-  void onWaveComplete() {
+  void onWaveComplete() async {
     add(GameText('Wave Complete!'));
+    background.addParallaxLayer();
+    await background.load();
     spawner.launcher.loadNextWave();
     spawner.start();
   }
@@ -127,6 +137,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   void gameOver() {
     GameState.playState = PlayState.lost;
     pauseEngine();
-    overlays.add('pause');
+    overlays.add('main menu');
   }
 }

@@ -4,15 +4,12 @@ import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/data.dart';
 
 class Background extends ParallaxComponent<SnufflesGame> {
-  Background.forTesting() {
-    scene = SceneType.outdoor;
-  }
-
-  Background(this.scene);
+  Background(this.scene, {this.numLayers = 1});
   late final SceneType scene;
+  late int numLayers;
 
   final Vector2 _baseVelocity = Vector2(10, 0);
-  final _velocityMultiplierDelta = Vector2(1.8, 0);
+  final _velocityMultiplierDelta = Vector2(1.5, 0);
 
   List<ParallaxImageData> imageData = [];
   List<ParallaxImageData> currentImages = [];
@@ -20,26 +17,37 @@ class Background extends ParallaxComponent<SnufflesGame> {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    // Load all parallax layers into cache from file
+    await loadScene(scene);
 
-    // Load all parallax layers into cache
-    String folder = scene.toString().split('.').last;
-    imageData = Data.bgFilenames[scene]!
-        .map((e) => ParallaxImageData('$folder/$e'))
-        .toList();
+    // Load into parallax
+    await load();
+  }
 
-    // Add the ground and sky
-    currentImages.add(imageData.last);
-    currentImages.add(imageData.first);
-    addParallaxLayer();
-    addParallaxLayer();
-    addParallaxLayer();
-    addParallaxLayer();
-    addParallaxLayer();
+  Future<void> load() async {
     parallax = await gameRef.loadParallax(
       currentImages,
       baseVelocity: _baseVelocity,
       velocityMultiplierDelta: _velocityMultiplierDelta,
     );
+  }
+
+  Future<void> loadScene(SceneType scene) async {
+    String folder = scene.toString().split('.').last;
+    imageData = Data.bgFilenames[scene]!
+        .map((e) => ParallaxImageData('$folder/$e'))
+        .toList();
+
+    currentImages.clear();
+    // Add the ground and sky and one other layer
+    currentImages.add(imageData.last);
+    currentImages.add(imageData.first);
+    addParallaxLayer();
+    addParallaxLayer();
+    // Add more layers
+    for (var i = 0; i < numLayers; i++) {
+      addParallaxLayer();
+    }
   }
 
   // Add next parallax layer

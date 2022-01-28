@@ -10,13 +10,13 @@ enum PlayerState { idle, jumping, running }
 class SnufflesComponent extends RiveComponent
     with HasGameRef<SnufflesGame>, HasHitboxes, Collidable {
   SnufflesComponent(Artboard artboard)
-      : super(artboard: artboard, size: Vector2.all(400)) {
+      : super(artboard: artboard, size: Vector2.all(320)) {
     anchor = Anchor.center;
     flipHorizontally();
   }
 
   // Ground y value
-  final startPos = Vector2(150, 290);
+  final startPos = Vector2(150, 380);
   final _gravity = Vector2(0, 30);
   final _jumpVelocity = Vector2(0, -13);
   Vector2 _velocity = Vector2(0, 0);
@@ -38,7 +38,7 @@ class SnufflesComponent extends RiveComponent
     if (other is Ground) {
       playerState = PlayerState.running;
       _velocity = Vector2.zero();
-      const offset = 24; // Snuffles image height correction
+      const offset = 5; // Snuffles image height correction
       position.y = other.position.y - other.size.y / 2 - offset;
     }
   }

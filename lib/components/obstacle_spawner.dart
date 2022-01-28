@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
@@ -16,15 +18,32 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
   Future<void> onLoad() async {
     await super.onLoad();
     add(launcher);
-
+    loadTestWaves();
     // List of delay times before each obstacle spawn as a fraction
     // of the base delay time
-    List<List<double>> testWaves = [
-      [0, 0.5, 0.5],
-      [0, 0.4, 0.3, 0.2],
-      [0, 0.2, 0.5, 0.3, 0.3, 0.2]
-    ];
-    launcher.loadAll(waves: testWaves);
+    // List<List<double>> testWaves = [
+    //   [0, 0.5, 0.5],
+    //   [0, 0.4, 0.3, 0.2],
+    //   [0, 0.2, 0.3, 0.2],
+    //   [0, 0.3, 0.3, 0.4, 0.2],
+    //   [0, 0.2, 0.5, 0.3, 0.3, 0.2],
+    // ];
+    // launcher.loadAll(waves: testWaves);
+    // start();
+  }
+
+  void loadTestWaves() {
+    int numWaves = Random().nextInt(2) + 2;
+    int numObstacles = Random().nextInt(4) + 1;
+    List<List<double>> waves = [];
+    for (var i = 0; i < numWaves; i++) {
+      // The first obstacle has zero delay
+      waves.add([0]);
+      for (var j = 1; j < numObstacles; j++) {
+        waves[i].add(Random().nextDouble().clamp(0.2, 0.6));
+      }
+    }
+    launcher.loadAll(waves: waves);
     start();
   }
 

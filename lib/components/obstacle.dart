@@ -11,17 +11,15 @@ class Obstacle extends SpriteComponent
     with HasGameRef<SnufflesGame>, HasHitboxes, Collidable {
   /// Delay factor is a value between 0 (no start delay) and 1
   Obstacle({this.delayFactor = 0}) {
-    size = Vector2(50, 50);
+    size = Vector2.all(50);
     anchor = Anchor.bottomLeft;
     // All Obstacles will be removed after 7 seconds
     add(RemoveEffect(delay: 7));
   }
 
-  /// Called to create a generic obstacle for debugging
-  Obstacle.forTesting() : delayFactor = 0;
-
   // What should this be?
   var velocity = Vector2(-250, 0);
+  var velocityDelta = Vector2(-30, 0);
 
   // Delay before spawning
   double delayFactor;
@@ -45,6 +43,14 @@ class Obstacle extends SpriteComponent
 
     addHitbox(HitboxRectangle(relation: Vector2(0.8, 0.8)));
     return super.onLoad();
+  }
+
+  void increaseSpeed() {
+    velocity += velocityDelta;
+  }
+
+  void decreaseSpeed() {
+    velocity -= velocityDelta;
   }
 
   @override

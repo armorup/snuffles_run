@@ -32,3 +32,5 @@ flutter:
     - assets/images/outdoor/
     - assets/images/forest/
     - assets/audio/
+    - assets/audio/sfx/
+    - assets/audio/music/

@@ -10,7 +10,8 @@ class Ground extends PositionComponent
   @override
   Future<void>? onLoad() {
     size = Vector2(gameRef.size.x, gameRef.size.y * 0.18);
-    position = Vector2(0, gameRef.size.y - size.y);
+    double offset = size.y * 0.8;
+    position = Vector2(0, gameRef.size.y - offset);
     collidableType = CollidableType.passive;
     addHitbox(HitboxRectangle());
 
