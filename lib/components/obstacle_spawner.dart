@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
 
@@ -8,53 +9,55 @@ enum SpawnState { spawning, stopped, started }
 
 /// A spawn point for game obstacles
 class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
-  ObstacleSpawner() : launcher = Launcher();
-  Launcher launcher;
+  ObstacleSpawner() : _launcher = Launcher();
+  final Launcher _launcher;
 
   SpawnState spawnState = SpawnState.stopped;
   double delayMultiplier = 5;
+  int waveNumber = 0;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    add(launcher);
-    loadTestWaves();
-    // List of delay times before each obstacle spawn as a fraction
-    // of the base delay time
-    // List<List<double>> testWaves = [
-    //   [0, 0.5, 0.5],
-    //   [0, 0.4, 0.3, 0.2],
-    //   [0, 0.2, 0.3, 0.2],
-    //   [0, 0.3, 0.3, 0.4, 0.2],
-    //   [0, 0.2, 0.5, 0.3, 0.3, 0.2],
-    // ];
-    // launcher.loadAll(waves: testWaves);
-    // start();
+    add(_launcher);
+    _loadTestWaves();
   }
 
-  void loadTestWaves() {
-    int numWaves = Random().nextInt(2) + 2;
-    int numObstacles = Random().nextInt(4) + 1;
+  void _loadTestWaves() {
+    int numWaves = 30;
+    int numObstacles = 2;
     List<List<double>> waves = [];
     for (var i = 0; i < numWaves; i++) {
       // The first obstacle has zero delay
       waves.add([0]);
       for (var j = 1; j < numObstacles; j++) {
-        waves[i].add(Random().nextDouble().clamp(0.2, 0.6));
+        waves[i].add(Random().nextDouble().clamp(0.3, 0.6));
       }
     }
-    launcher.loadAll(waves: waves);
+    _launcher.loadAll(waves: waves);
+    nextWave();
+  }
+
+  void restart() {
+    _launcher.reset();
+    waveNumber = _launcher._waveNumber;
+    // remove all obstacles from game
+    removeAll(gameRef.children.whereType<Obstacle>());
+    _loadTestWaves();
     start();
   }
 
   // Start the spawner
-  void start() {
-    spawnState = SpawnState.started;
-  }
+  void start() => spawnState = SpawnState.started;
 
   // Stop the spawner
-  void stop() {
-    spawnState = SpawnState.stopped;
+  void stop() => spawnState = SpawnState.stopped;
+
+  // Load next wave
+  void nextWave() {
+    _launcher._loadNextWave();
+    waveNumber = _launcher._waveNumber;
+    gameRef.add(GameText('Wave $waveNumber'));
   }
 
   @override
@@ -62,84 +65,83 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
     super.update(dt);
 
     if (spawnState == SpawnState.started) {
-      bool waveComplete = launcher.launchWave(dt);
+      bool waveComplete = _launcher._launchWave(dt);
       if (waveComplete) {
-        spawnState = SpawnState.stopped;
+        stop();
       }
     }
   }
 }
 
+/// Launcher for obstacles
 class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   Launcher({
     this.delayMultiplier = 5,
   });
 
   double delayMultiplier = 5;
-  List<List<Obstacle>> curWaves = [];
-  List<Obstacle> curWave = [];
-  int waveNumber = 0;
+  final List<List<Obstacle>> _curWaves = [];
+  final List<Obstacle> _curWave = [];
+  int _waveNumber = 0;
 
   // Delay between waves
-  double waveDelay = 2;
-  double delay = 0;
-  double timer = 0;
+  final double _waveDelay = 2;
+  double _timer = 0;
 
   // Load launcher with a single list of delays
   void load({required List<double> wave}) {
-    curWaves.add(wave
+    _curWaves.add(wave
         .map(
           (delay) => Obstacle(delayFactor: delay),
         )
         .toList());
-    // after loading the wave, put it in the launch queue
-    loadNextWave();
   }
 
   // Load launcher with several lists of delays representing
   // muliple waves of obstacles
   void loadAll({required List<List<double>> waves}) {
-    for (List<double> wave in waves) {
-      curWaves.add(
-        wave
+    for (int waveNum = 1; waveNum < waves.length; waveNum++) {
+      _curWaves.add(
+        waves[waveNum]
             .map(
-              (delay) => Obstacle(delayFactor: delay),
+              (delay) => Obstacle(
+                delayFactor: delay,
+                speedFactor: waveNum,
+              ),
             )
             .toList(),
       );
     }
-    // after loading the waves, put the first one in the launch queue
-    loadNextWave();
   }
 
   // Add a delay before launching next obstacle
-  void addLaunchDelay(double dt) {
-    timer -= dt;
-  }
+  void addLaunchDelay(double dt) => _timer -= dt;
 
-  void loadNextWave() {
-    if (curWaves.isEmpty) return;
-    addLaunchDelay(waveDelay);
-    curWave.addAll(curWaves.removeAt(0));
+  void _loadNextWave() {
+    if (_curWaves.isEmpty) return;
+    addLaunchDelay(_waveDelay);
+    _waveNumber++;
+    _curWave.addAll(_curWaves.removeAt(0));
   }
 
   // Launch the obstacle returns true if the the wave is complete
-  bool launchWave(double dt) {
-    timer += dt;
-    if (timer > curWave.first.delayFactor * delayMultiplier) {
+  bool _launchWave(double dt) {
+    _timer += dt;
+    if (_timer > _curWave.first.delayFactor * delayMultiplier) {
       // Spawn the obstacle
-      var obs = curWave.removeAt(0);
-      obs.isLastInWave = curWave.isEmpty && curWaves.isNotEmpty;
-      obs.isLastInLevel = curWave.isEmpty && curWaves.isEmpty;
+      var obs = _curWave.removeAt(0);
+      obs.isLastInWave = _curWave.isEmpty && _curWaves.isNotEmpty;
+      obs.isLastInLevel = _curWave.isEmpty && _curWaves.isEmpty;
       add(obs);
-      timer = 0;
+      _timer = 0;
     }
-    return curWave.isEmpty;
+    return _curWave.isEmpty;
   }
 
   void reset() {
-    waveNumber = 0;
-    curWaves.clear();
-    curWave.clear();
+    _timer = 0;
+    _curWaves.clear();
+    _curWave.clear();
+    _waveNumber = 0;
   }
 }

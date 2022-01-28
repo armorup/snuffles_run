@@ -1,35 +1,6 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snuffles_run/game.dart';
-import 'package:snuffles_run/screens/options.dart';
-
-class App extends StatelessWidget {
-  App({Key? key}) : super(key: key);
-
-  final _router = GoRouter(routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const MainMenu(),
-    ),
-    GoRoute(
-      path: '/game',
-      builder: (context, state) => const GamePlay(),
-    ),
-    GoRoute(
-      path: '/options',
-      builder: (context, state) => const OptionsMenu(),
-    )
-  ]);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
-    );
-  }
-}
 
 class MainMenu extends StatelessWidget {
   const MainMenu({Key? key}) : super(key: key);

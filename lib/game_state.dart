@@ -1,5 +1,5 @@
 /// Describes the current state of the game.
-enum PlayState { paused, playing, lost, won, loading }
+enum PlayState { paused, playing, loading }
 
 /// State of the game to track global infomration.
 class GameState {

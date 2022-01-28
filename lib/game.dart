@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/ground.dart';
+import 'package:snuffles_run/components/obstacle.dart';
 import 'package:snuffles_run/components/obstacle_spawner.dart';
 import 'package:snuffles_run/components/score_text.dart';
 import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game_state.dart';
+import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
 import 'package:snuffles_run/screens/pause_menu.dart';
 import 'components/background.dart';
@@ -18,8 +20,8 @@ import 'components/background.dart';
 // Single instance of game
 SnufflesGame _game = SnufflesGame();
 
-class GamePlay extends StatelessWidget {
-  const GamePlay({Key? key}) : super(key: key);
+class Game extends StatelessWidget {
+  const Game({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class GamePlay extends StatelessWidget {
         overlayBuilderMap: {
           'main menu': (context, SnufflesGame game) => const MainMenu(),
           'pause': (context, SnufflesGame game) => PauseMenu(game: game),
+          'map': (context, SnufflesGame game) => GameMap(game: game),
         },
       ),
     );
@@ -61,6 +64,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   // The main obstacle spawner
   final spawner = ObstacleSpawner();
   var background = Background(Data.scene);
+  final ground = Ground();
   double score = 0;
 
   @override
@@ -69,26 +73,25 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
+    FlameAudio.bgm.initialize();
+    await FlameAudio.bgm
+        .loadAll(['music/Dark Beach.mp3', 'music/Paradise.mp3']);
+    FlameAudio.bgm.play('music/Dark Beach.mp3');
     FlameAudio.audioCache.loadAll(['sfx/Abstract1.mp3', 'sfx/Abstract2.mp3']);
+
     snuffles = SnufflesComponent(
       await loadArtboard(RiveFile.asset('assets/images/snuffles.riv')),
     );
 
     // Add background first
     await add(background);
-    final ground = Ground();
     await add(ground);
     add(ScoreText());
     add(snuffles);
     spawner.position = Vector2(size.x + 20, ground.y);
     add(spawner);
 
-    add(GameText('Let\'s Go!'));
-    start();
-  }
-
-  /// Starts the game
-  void start() {
     GameState.playState = PlayState.playing;
     spawner.start();
   }
@@ -97,7 +100,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   void update(double dt) {
     // Increase the score
     score += dt;
-
     super.update(dt);
   }
 
@@ -111,32 +113,41 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   /// Called by obstacle when the level is finished
   void onLevelComplete() async {
     add(GameText('Level Complete'));
-    Data.scene = SceneType.forest;
-    background.loadScene(Data.scene);
-    await background.load();
-    spawner.loadTestWaves();
-    spawner.start();
+    goScene(Data.scene);
   }
 
   /// Called by obstacle when wave is finished
   void onWaveComplete() async {
-    add(GameText('Wave Complete!'));
-    background.addParallaxLayer();
-    await background.load();
-    spawner.launcher.loadNextWave();
+    // Change background every 3 waves
+    if (spawner.waveNumber % 3 == 0) {
+      background.addParallaxLayer();
+      await background.load();
+    }
+    spawner.nextWave();
     spawner.start();
   }
 
-  void restart() {
+  void restart() async {
     GameState.playState = PlayState.playing;
-    resumeEngine();
+    background.reset();
+    await background.resetTo(Data.scene);
+    await background.load();
+    spawner.restart();
     score = 0;
   }
 
-  /// Called when game is over
-  void gameOver() {
-    GameState.playState = PlayState.lost;
+  // Go to the correct game scene
+  void goScene(SceneType scene) async {
+    Data.scene = SceneType.outdoor;
+    restart();
+    resumeEngine();
+  }
+
+  /// Go to map when game is over
+  void goMap() {
+    GameState.playState = PlayState.paused;
+    removeAll(children.whereType<Obstacle>());
     pauseEngine();
-    overlays.add('main menu');
+    overlays.add('map');
   }
 }

@@ -72,8 +72,6 @@ class PauseMenu extends StatelessWidget {
   String _getTitle() {
     if (GameState.playState == PlayState.paused) {
       return 'Pause';
-    } else if (GameState.playState == PlayState.lost) {
-      return 'Game over';
     } else {
       return 'Winner';
     }
