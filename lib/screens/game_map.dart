@@ -9,44 +9,97 @@ class GameMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final numScenes = Data.scenes.length;
+    final scenes = Data.scenes.keys
+        .map(
+          (sceneType) => Scene(
+            game: game,
+            sceneType: sceneType,
+          ),
+        )
+        .toList();
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      body: Center(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              child: Text(
+                'Game map',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                onPressed: () => context.go('/'),
+                child: const Text('Exit to Main Menu'),
+              ),
+            ),
+            Expanded(
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: numScenes,
+                itemBuilder: (context, index) => scenes[index],
+                separatorBuilder: (context, index) => const SizedBox(
+                  width: 10,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Scene extends StatelessWidget {
+  const Scene({Key? key, required this.game, required this.sceneType})
+      : super(key: key);
+  final SnufflesGame game;
+  final SceneType sceneType;
+
+  @override
+  Widget build(BuildContext context) {
+    final sceneName = sceneType.toString().split('.').last;
+    final locked = Data.scenes[sceneType]!['locked'];
+    final highScore = Data.scenes[sceneType]!['highscore'];
+    final scoreHeader = locked ? '' : 'High Score';
+    final scoreText = locked ? '' : '$highScore Waves';
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 4,
+      child: ElevatedButton(
+        onPressed: () {
+          if (locked) return;
+          game.overlays.remove('map');
+          game.goScene(sceneType);
+        },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'The Game map',
-              style: Theme.of(context).textTheme.bodyText1,
+              sceneName,
+              style: const TextStyle(fontSize: 25),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      game.overlays.remove('map');
-                      game.goScene(SceneType.outdoor);
-                    },
-                    child: const Text('Outdoor'),
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
-                  child: ElevatedButton(
-                    onPressed: () => game.overlays.remove('map'),
-                    child: const Text('Forest'),
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
-                  child: ElevatedButton(
-                    onPressed: () => context.go('/'),
-                    child: const Text('Main Menu'),
-                  ),
-                ),
-              ],
+            const SizedBox(
+              height: 15,
+            ),
+            locked ? const Icon(Icons.lock) : const Icon(Icons.check),
+            const SizedBox(
+              height: 15,
+            ),
+            Text(
+              scoreHeader,
+              style: TextStyle(fontSize: 20),
+            ),
+            const SizedBox(
+              height: 7,
+            ),
+            Text(
+              scoreText,
+              style: const TextStyle(fontSize: 20),
             ),
           ],
         ),

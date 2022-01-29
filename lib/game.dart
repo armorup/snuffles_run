@@ -63,7 +63,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   // The main obstacle spawner
   final spawner = ObstacleSpawner();
-  var background = Background(Data.scene);
+  var background = Background(Data.curScene);
   final ground = Ground();
   double score = 0;
 
@@ -113,7 +113,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   /// Called by obstacle when the level is finished
   void onLevelComplete() async {
     add(GameText('Level Complete'));
-    goScene(Data.scene);
+    goScene(Data.curScene);
   }
 
   /// Called by obstacle when wave is finished
@@ -130,7 +130,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   void restart() async {
     GameState.playState = PlayState.playing;
     background.reset();
-    await background.resetTo(Data.scene);
+    await background.resetTo(Data.curScene);
     await background.load();
     spawner.restart();
     score = 0;
@@ -138,15 +138,30 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   // Go to the correct game scene
   void goScene(SceneType scene) async {
-    Data.scene = SceneType.outdoor;
+    Data.curScene = SceneType.outdoor;
     restart();
     resumeEngine();
   }
 
-  /// Go to map when game is over
-  void goMap() {
+  void gameOver() {
+    // camera.zoom = 2;
+    // camera.followComponent(snuffles);
     GameState.playState = PlayState.paused;
     removeAll(children.whereType<Obstacle>());
+    // determine high score
+    updateHighscore(Data.curScene, spawner.waveNumber);
+    goMap();
+  }
+
+  void updateHighscore(SceneType sceneType, int score) {
+    final high = Data.scenes[sceneType]!['highscore'];
+    if (score > high) {
+      Data.scenes[sceneType]!['highscore'] = score;
+    }
+  }
+
+  /// Go to map when game is over
+  void goMap() {
     pauseEngine();
     overlays.add('map');
   }

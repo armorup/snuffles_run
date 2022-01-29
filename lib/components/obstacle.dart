@@ -64,7 +64,8 @@ class Obstacle extends SpriteComponent
 
       // Trying to remove this obstacle after collision
       position = Vector2(-1000, 0);
-      gameRef.goMap();
+
+      gameRef.gameOver();
     }
   }
 

@@ -7,16 +7,18 @@ enum SceneType {
 
 /// The game data
 class Data {
-  static int level = 1;
   static String hero = 'bunny';
-  static SceneType scene = SceneType.outdoor;
+  static SceneType curScene = SceneType.outdoor;
 
-  // Scene and wave completed for that scene
-  // 0 means that scene hasn't been attempted
-  // -1 means that scene is locked
-  static Map<SceneType, int> completion = {
-    SceneType.outdoor: 0,
-    SceneType.forest: 0,
+  static Map<SceneType, Map<String, dynamic>> scenes = {
+    SceneType.outdoor: {
+      'locked': false,
+      'highscore': 0,
+    },
+    SceneType.forest: {
+      'locked': true,
+      'highscore': 0,
+    }
   };
 
   // List of file names for each scene
