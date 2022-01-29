@@ -12,7 +12,7 @@ class GameText extends TextComponent with HasGameRef<SnufflesGame> {
     textRenderer = TextPaint(
       style: const TextStyle(
         color: Colors.white,
-        fontSize: 80,
+        fontSize: 65,
         fontFamily: 'helvetica',
       ),
     );

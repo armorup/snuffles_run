@@ -56,7 +56,6 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
   void nextWave() {
     _launcher._loadNextWave();
     waveNumber = _launcher._waveNumber;
-    gameRef.add(GameText('Wave $waveNumber'));
   }
 
   @override

@@ -15,11 +15,31 @@ class Data {
       'locked': false,
       'highscore': 0,
     },
-    SceneType.forest: {
-      'locked': true,
-      'highscore': 0,
-    }
   };
+
+  /// Add a scene
+  static bool addScene(SceneType sceneType) {
+    if (scenes.containsKey(sceneType)) return false;
+    scenes.putIfAbsent(sceneType, () => {'locked': true, 'highscore': 0});
+    return true;
+  }
+
+  /// Unlock a scene
+  static bool unlockScene(SceneType sceneType) {
+    if (!scenes.containsKey(sceneType)) return false;
+    var locked = scenes[sceneType]!['locked'];
+    if (!locked) return false;
+    scenes[sceneType]!['locked'] = false;
+    return true;
+  }
+
+  /// Update high score
+  static void updateHighscore(SceneType sceneType, int score) {
+    final high = Data.scenes[sceneType]!['highscore'];
+    if (score > high) {
+      Data.scenes[sceneType]!['highscore'] = score;
+    }
+  }
 
   // List of file names for each scene
   static Map<SceneType, List<String>> bgFilenames = {

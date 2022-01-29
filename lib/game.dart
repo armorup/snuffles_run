@@ -90,8 +90,8 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     spawner.position = Vector2(size.x + 20, ground.y);
     add(spawner);
 
-    GameState.playState = PlayState.playing;
-    spawner.start();
+    // Start the game
+    restart();
   }
 
   @override
@@ -120,7 +120,16 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     if (spawner.waveNumber == 1 || spawner.waveNumber % 3 == 0) {
       background.addParallaxLayer();
     }
+
     spawner.nextWave();
+
+    if (spawner.waveNumber == 5 && Data.addScene(SceneType.forest)) {
+      add(GameText('New Scene!'));
+    } else if (spawner.waveNumber == 10 && Data.unlockScene(SceneType.forest)) {
+      add(GameText('Scene Unlocked!'));
+    } else {
+      add(GameText('Wave ${spawner.waveNumber}'));
+    }
     spawner.start();
   }
 
@@ -129,6 +138,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     await background.resetTo(Data.curScene);
     spawner.restart();
     score = 0;
+    add(GameText('Wave ${spawner.waveNumber}'));
   }
 
   // Go to the correct game scene
@@ -138,6 +148,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     resumeEngine();
   }
 
+  /// Called when bunny collides with obstacle
   void gameOver() {
     //camera.zoom = 2;
     //camera.followComponent(snuffles);
@@ -146,19 +157,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     background.stop();
     removeAll(children.whereType<Obstacle>());
     // determine high score
-    updateHighscore(Data.curScene, spawner.waveNumber);
-    goMap();
-  }
-
-  void updateHighscore(SceneType sceneType, int score) {
-    final high = Data.scenes[sceneType]!['highscore'];
-    if (score > high) {
-      Data.scenes[sceneType]!['highscore'] = score;
-    }
-  }
-
-  /// Go to map when game is over
-  void goMap() {
+    Data.updateHighscore(Data.curScene, spawner.waveNumber);
     pauseEngine();
     overlays.add('map');
   }

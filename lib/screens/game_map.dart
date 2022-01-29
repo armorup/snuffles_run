@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game.dart';
 
@@ -25,12 +24,6 @@ class GameMap extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              child: Text(
-                'Game map',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-            ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: ElevatedButton(
@@ -58,6 +51,7 @@ class GameMap extends StatelessWidget {
   }
 }
 
+/// The scene to show on map
 class Scene extends StatelessWidget {
   const Scene({Key? key, required this.game, required this.sceneType})
       : super(key: key);
@@ -86,24 +80,27 @@ class Scene extends StatelessWidget {
               sceneName,
               style: const TextStyle(fontSize: 30),
             ),
-            const SizedBox(
-              height: 15,
-            ),
-            locked ? const Icon(Icons.lock) : const Icon(Icons.check),
-            const SizedBox(
-              height: 15,
-            ),
-            Text(
-              scoreHeader,
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(
-              height: 7,
-            ),
-            Text(
-              scoreText,
-              style: const TextStyle(fontSize: 40),
-            ),
+            const SizedBox(height: 15),
+            locked
+                ? const Icon(
+                    Icons.lock,
+                    size: 40,
+                  )
+                : const SizedBox(),
+            const SizedBox(height: 15),
+            locked
+                ? const SizedBox()
+                : Text(
+                    scoreHeader,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+            const SizedBox(height: 7),
+            locked
+                ? const SizedBox()
+                : Text(
+                    scoreText,
+                    style: const TextStyle(fontSize: 40),
+                  ),
           ],
         ),
       ),
