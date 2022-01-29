@@ -34,7 +34,10 @@ class GameMap extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: ElevatedButton(
-                onPressed: () => context.go('/'),
+                onPressed: () {
+                  game.overlays.remove('map');
+                  game.overlays.add('main menu');
+                },
                 child: const Text('Exit to Main Menu'),
               ),
             ),
@@ -67,7 +70,7 @@ class Scene extends StatelessWidget {
     final locked = Data.scenes[sceneType]!['locked'];
     final highScore = Data.scenes[sceneType]!['highscore'];
     final scoreHeader = locked ? '' : 'High Score';
-    final scoreText = locked ? '' : '$highScore Waves';
+    final scoreText = locked ? '' : '$highScore';
     return SizedBox(
       width: MediaQuery.of(context).size.width / 4,
       child: ElevatedButton(
@@ -81,7 +84,7 @@ class Scene extends StatelessWidget {
           children: [
             Text(
               sceneName,
-              style: const TextStyle(fontSize: 25),
+              style: const TextStyle(fontSize: 30),
             ),
             const SizedBox(
               height: 15,
@@ -92,14 +95,14 @@ class Scene extends StatelessWidget {
             ),
             Text(
               scoreHeader,
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(
               height: 7,
             ),
             Text(
               scoreText,
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 40),
             ),
           ],
         ),

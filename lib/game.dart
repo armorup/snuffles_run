@@ -17,18 +17,16 @@ import 'package:snuffles_run/screens/main_menu.dart';
 import 'package:snuffles_run/screens/pause_menu.dart';
 import 'components/background.dart';
 
-// Single instance of game
-SnufflesGame _game = SnufflesGame();
-
 class Game extends StatelessWidget {
-  const Game({Key? key}) : super(key: key);
+  const Game({Key? key, required this.game}) : super(key: key);
+  final SnufflesGame game;
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: GameWidget(
-        game: _game,
+        game: game,
         //Work in progress loading screen on game start
         loadingBuilder: (context) => const Material(
           child: Center(
@@ -42,7 +40,7 @@ class Game extends StatelessWidget {
 
           return const Material(
             child: Center(
-              child: Text('Sorry, something went wrong. Reload me'),
+              child: Text('Oops, something went wrong. Reload me'),
             ),
           );
         },
@@ -118,10 +116,9 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   /// Called by obstacle when wave is finished
   void onWaveComplete() async {
-    // Change background every 3 waves
-    if (spawner.waveNumber % 3 == 0) {
+    // Change after first wave, then every 3 waves
+    if (spawner.waveNumber == 1 || spawner.waveNumber % 3 == 0) {
       background.addParallaxLayer();
-      await background.load();
     }
     spawner.nextWave();
     spawner.start();
@@ -129,9 +126,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   void restart() async {
     GameState.playState = PlayState.playing;
-    background.reset();
     await background.resetTo(Data.curScene);
-    await background.load();
     spawner.restart();
     score = 0;
   }
@@ -144,9 +139,11 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   }
 
   void gameOver() {
-    // camera.zoom = 2;
-    // camera.followComponent(snuffles);
+    //camera.zoom = 2;
+    //camera.followComponent(snuffles);
     GameState.playState = PlayState.paused;
+    // stop background parallax
+    background.stop();
     removeAll(children.whereType<Obstacle>());
     // determine high score
     updateHighscore(Data.curScene, spawner.waveNumber);

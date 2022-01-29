@@ -6,7 +6,6 @@ import 'package:snuffles_run/data.dart';
 class Background extends ParallaxComponent<SnufflesGame> {
   Background(this.scene);
   late final SceneType scene;
-  int numLayers = 1;
 
   final Vector2 _baseVelocity = Vector2(10, 0);
   final _velocityMultiplierDelta = Vector2(1.5, 0);
@@ -19,12 +18,10 @@ class Background extends ParallaxComponent<SnufflesGame> {
     await super.onLoad();
     // Load all parallax layers into cache from file
     await resetTo(scene);
-
-    // Load into parallax
-    await load();
   }
 
-  Future<void> load() async {
+  /// Load images into parallax
+  Future<void> _load() async {
     parallax = await gameRef.loadParallax(
       currentImages,
       baseVelocity: _baseVelocity,
@@ -33,6 +30,7 @@ class Background extends ParallaxComponent<SnufflesGame> {
   }
 
   Future<void> resetTo(SceneType scene) async {
+    // Load file images
     String folder = scene.toString().split('.').last;
     imageData = Data.bgFilenames[scene]!
         .map((e) => ParallaxImageData('$folder/$e'))
@@ -43,14 +41,13 @@ class Background extends ParallaxComponent<SnufflesGame> {
     currentImages.add(imageData.last);
     currentImages.add(imageData.first);
     addParallaxLayer();
-    // Add more layers
-    for (var i = 0; i < numLayers; i++) {
-      addParallaxLayer();
-    }
+
+    // Load into parallax
+    await _load();
   }
 
   // Add next parallax layer
-  void addParallaxLayer() {
+  void addParallaxLayer() async {
     if (currentImages.length == imageData.length) return;
 
     // There should be at minimum 2 layers, ground and sky
@@ -63,26 +60,21 @@ class Background extends ParallaxComponent<SnufflesGame> {
     currentImages.add(imageData[length]);
     currentImages.add(sky);
     currentImages = currentImages.reversed.toList();
+
+    await _load();
   }
 
-  void reset() {
-    numLayers = 1;
-    currentImages.clear();
+  /// Start parallax
+  void start() {
+    assert(parallax != null);
+    if (parallax!.baseVelocity != Vector2.zero()) return;
+    parallax!.baseVelocity = _baseVelocity;
   }
 
-  // Return true if background is scrolling
-  bool _isScrolling() {
-    if (parallax == null) return false;
-
-    return parallax!.baseVelocity != Vector2.zero();
-  }
-
-  /// Pause or play parallax
-  void toggleParallax() {
-    if (_isScrolling()) {
-      parallax!.baseVelocity = Vector2.zero();
-    } else {
-      parallax!.baseVelocity = _baseVelocity;
-    }
+  /// Stop parallax
+  void stop() {
+    assert(parallax != null);
+    if (parallax!.baseVelocity == Vector2.zero()) return;
+    parallax!.baseVelocity = Vector2.zero();
   }
 }
