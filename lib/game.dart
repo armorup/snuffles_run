@@ -12,6 +12,7 @@ import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game_state.dart';
 import 'package:snuffles_run/screens/cutscene.dart';
+import 'package:snuffles_run/screens/debug.dart';
 import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/screens/pause_menu.dart';
@@ -43,7 +44,7 @@ class GameLoader extends StatelessWidget {
           );
         },
         overlayBuilderMap: {
-          //'main menu': (context, SnufflesGame game) => const MainMenu(),
+          'debug': (context, SnufflesGame game) => Debug(game: game),
           'pause': (context, SnufflesGame game) => PauseMenu(game: game),
           'map': (context, SnufflesGame game) => GameMap(game: game),
           'cutscene': (context, SnufflesGame game) => CutScene(game: game),
@@ -56,6 +57,9 @@ class GameLoader extends StatelessWidget {
 /// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   SnufflesGame({required this.data});
+
+  @override
+  bool get debugMode => true;
 
   // Player data
   Data data;
@@ -70,21 +74,15 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   double score = 0;
 
   @override
-  bool get debugMode => false;
-
-  @override
   Future<void> onLoad() async {
     await super.onLoad();
-
-    // // Load save data
-    // var prefs = await SharedPreferences.getInstance();
-    // data = Data.fromSave(prefs);
+    GameState.state = PlayState.loading;
 
     // TODO: Fix this Load audio
     FlameAudio.bgm.initialize();
     await FlameAudio.bgm
         .loadAll(['music/Dark Beach.mp3', 'music/Paradise.mp3']);
-    FlameAudio.bgm.play('music/Dark Beach.mp3');
+    //FlameAudio.bgm.play('music/Paradise.mp3');
     FlameAudio.audioCache.loadAll(['sfx/Abstract1.mp3', 'sfx/Abstract2.mp3']);
 
     snuffles = SnufflesComponent(
@@ -100,8 +98,22 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     spawner.position = Vector2(size.x + 20, ground.y);
     add(spawner);
 
-    // Start the game
-    restart();
+    if (debugMode) {
+      data = Data();
+      overlays.add('debug');
+    } else {
+      // Start the game
+      restart();
+    }
+  }
+
+  /// Restart the game
+  void restart() async {
+    GameState.state = PlayState.playing;
+    await background.resetTo(data.curScene);
+    spawner.restart();
+    score = 0;
+    add(GameText('Wave ${spawner.waveNumber}'));
   }
 
   @override
@@ -148,15 +160,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     } else {
       add(GameText('Wave ${spawner.waveNumber}'));
     }
-  }
-
-  /// Restart the game
-  void restart() async {
-    GameState.state = PlayState.playing;
-    await background.resetTo(data.curScene);
-    spawner.restart();
-    score = 0;
-    add(GameText('Wave ${spawner.waveNumber}'));
   }
 
   /// Go to the correct game scene

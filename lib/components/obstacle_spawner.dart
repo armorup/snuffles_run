@@ -20,12 +20,12 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
   Future<void> onLoad() async {
     await super.onLoad();
     add(_launcher);
-    _loadTestWaves();
+    _loadWaves();
   }
 
-  void _loadTestWaves() {
-    int numWaves = 30;
-    int numObstacles = 2;
+  void _loadWaves() {
+    int numWaves = 50;
+    int numObstacles = debugMode ? 1 : 2;
     List<List<double>> waves = [];
     for (var i = 0; i < numWaves; i++) {
       // The first obstacle has zero delay
@@ -43,7 +43,7 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
     waveNumber = _launcher._waveNumber;
     // remove all obstacles from game
 
-    _loadTestWaves();
+    _loadWaves();
     start();
   }
 

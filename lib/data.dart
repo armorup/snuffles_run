@@ -9,6 +9,7 @@ part 'data.g.dart';
 enum SceneType {
   outdoor,
   forest,
+  backyard,
 }
 
 enum HeroType {
@@ -19,6 +20,7 @@ enum HeroType {
 /// The game data utilities
 @JsonSerializable()
 class Data {
+  // Default Constructor
   Data({
     this.hero = HeroType.bunny,
     this.curScene = SceneType.outdoor,
@@ -54,12 +56,6 @@ class Data {
     var prefs = await SharedPreferences.getInstance();
 
     prefs.setString('data', json);
-  }
-
-  void loadFromSave() async {
-    //var json = await rootBundle.loadString('assets/data.json');
-    //var restoredData = Data.fromJson(jsonDecode(json));
-    //print(restoredData);
   }
 
   /// Add a scene
@@ -114,6 +110,16 @@ class Data {
       '08_Forest.png',
       '09_Forest.png',
       '10_Sky.png',
+    ],
+    SceneType.backyard: [
+      '01_ground.png',
+      '02_petals.png',
+      '03_bushes.png',
+      '04_foregroundtrees.png',
+      '05_grass.png',
+      '06_backgroundtrees.png',
+      '07_clouds.png',
+      '08_sky.png',
     ]
   };
 }

@@ -4,7 +4,6 @@ import 'package:flame/flame.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
@@ -40,20 +39,34 @@ void main() async {
 class App extends StatelessWidget {
   App({Key? key}) : super(key: key);
 
-  final _router = GoRouter(routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const MainMenu(),
-    ),
-    GoRoute(
-      path: '/game',
-      builder: (context, state) => const GameLoader(),
-    ),
-    GoRoute(
-      path: '/options',
-      builder: (context, state) => const OptionsMenu(),
-    ),
-  ]);
+  final _router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const MainMenu(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/game',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const GameLoader(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/options',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          child: const OptionsMenu(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        ),
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
