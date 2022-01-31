@@ -12,14 +12,21 @@ class OptionsMenu extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Options Menu',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: TextStyle(fontSize: 30),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
-                onPressed: () => context.go('/'),
+                onPressed: () => context.push('/achievements'),
+                child: const Text('Achievements'),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 3,
+              child: ElevatedButton(
+                onPressed: () => context.pop(),
                 child: const Text('Back'),
               ),
             ),

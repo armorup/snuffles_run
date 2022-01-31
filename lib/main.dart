@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snuffles_run/data.dart';
+import 'package:snuffles_run/screens/achievements.dart';
+import 'package:snuffles_run/screens/endless.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
 import 'package:snuffles_run/screens/options.dart';
+import 'package:snuffles_run/screens/playmode.dart';
 
 import 'game.dart';
 
@@ -43,28 +46,28 @@ class App extends StatelessWidget {
     routes: [
       GoRoute(
         path: '/',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          child: const MainMenu(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              FadeTransition(opacity: animation, child: child),
-        ),
+        builder: (context, state) => const MainMenu(),
+      ),
+      GoRoute(
+        path: '/mode',
+        builder: (context, state) => const PlayMode(),
       ),
       GoRoute(
         path: '/game',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          child: const GameLoader(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              FadeTransition(opacity: animation, child: child),
-        ),
+        pageBuilder: (context, state) => Page(const GameLoader()),
+      ),
+      GoRoute(
+        path: '/endless',
+        pageBuilder: (context, state) => Page(const Endless()),
       ),
       GoRoute(
         path: '/options',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          child: const OptionsMenu(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              FadeTransition(opacity: animation, child: child),
-        ),
+        builder: (context, state) => const OptionsMenu(),
       ),
+      GoRoute(
+        path: '/achievements',
+        builder: (context, state) => const Achievements(),
+      )
     ],
   );
 
@@ -75,4 +78,14 @@ class App extends StatelessWidget {
       routerDelegate: _router.routerDelegate,
     );
   }
+}
+
+/// Custom Fade transistion
+class Page extends CustomTransitionPage {
+  Page(child)
+      : super(
+          child: child,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
 }

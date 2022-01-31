@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game.dart';
@@ -68,7 +69,7 @@ class Scene extends StatelessWidget {
     final scoreHeader = unlocked ? 'High Score' : '';
     final scoreText = unlocked ? '$highScore' : '';
 
-    final path = 'assets/images/$sceneName/obstacles/';
+    //final path = 'assets/images/$sceneName/obstacles/';
     return SizedBox(
       width: MediaQuery.of(context).size.width / 4,
       child: ElevatedButton(
@@ -77,35 +78,33 @@ class Scene extends StatelessWidget {
           game.overlays.remove('map');
           game.goScene(sceneType);
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Image.asset('${path}obst_1.png'),
-            Text(
-              sceneName,
-              style: const TextStyle(fontSize: 30),
-            ),
-            const SizedBox(height: 15),
-            unlocked
-                ? const SizedBox()
-                : const Icon(
-                    Icons.lock,
-                    size: 40,
+            SvgPicture.asset(
+                'assets/images/$sceneName/obstacles/game_map_image.svg'),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 110),
+                  Text(
+                    sceneName,
+                    style: const TextStyle(fontSize: 30),
                   ),
-            const SizedBox(height: 15),
-            unlocked
-                ? Text(
-                    scoreHeader,
-                    style: const TextStyle(fontSize: 20),
-                  )
-                : const SizedBox(),
-            const SizedBox(height: 7),
-            unlocked
-                ? Text(
-                    scoreText,
-                    style: const TextStyle(fontSize: 40),
-                  )
-                : const SizedBox(),
+                  if (!unlocked) const Icon(Icons.lock, size: 40),
+                  if (unlocked)
+                    Text(
+                      scoreHeader,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  if (unlocked)
+                    Text(
+                      scoreText,
+                      style: const TextStyle(fontSize: 40),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

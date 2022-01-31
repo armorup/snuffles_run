@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/geometry.dart';
+import 'package:flame_svg/flame_svg.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/game_state.dart';
@@ -51,6 +52,15 @@ class Obstacle extends SpriteComponent
     }
     var r = Random().nextInt(numImages);
     sprite = Sprite(gameRef.images.fromCache(imageNames[r]));
+
+    // try svg
+    final svgInstance =
+        await Svg.load('images/outdoor/obstacles/game_map_image.svg');
+    final rock = SvgComponent.fromSvg(svgInstance)
+      ..position = position
+      ..size = (Vector2.all(100))
+      ..anchor = Anchor.center;
+    add(rock);
 
     // Set obstacle velocity
     _velocity += _velocityDelta * speedScale.toDouble();

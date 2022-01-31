@@ -2,8 +2,8 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class MainMenu extends StatelessWidget {
-  const MainMenu({Key? key}) : super(key: key);
+class PlayMode extends StatelessWidget {
+  const PlayMode({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +34,39 @@ class MainMenu extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   FlameAudio.audioCache.play('sfx/Abstract1.mp3');
-                  context.push('/mode');
+                  context.go('/game');
                 },
-                child: const Text('Play'),
+                child: const Text('Story'),
               ),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
                 onPressed: () {
-                  FlameAudio.audioCache.play('sfx/Abstract2.mp3');
-                  context.push('/options');
+                  FlameAudio.audioCache.play('sfx/Abstract1.mp3');
+                  context.go('/game');
                 },
-                child: const Text('Options'),
+                child: const Text('Level Select'),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 3,
+              child: ElevatedButton(
+                onPressed: () {
+                  FlameAudio.audioCache.play('sfx/Abstract1.mp3');
+                  context.go('/Endless');
+                },
+                child: const Text('Endless'),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 3,
+              child: ElevatedButton(
+                onPressed: () {
+                  FlameAudio.audioCache.play('sfx/Abstract1.mp3');
+                  context.pop();
+                },
+                child: const Text('Back'),
               ),
             ),
           ],

@@ -59,7 +59,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   SnufflesGame({required this.data});
 
   @override
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   // Player data
   Data data;
