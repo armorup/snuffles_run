@@ -1,3 +1,9 @@
+import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+part 'data.g.dart';
+
 /// The scenario type
 /// Matches scene type name to folder that contains the parallax images
 enum SceneType {
@@ -5,39 +11,79 @@ enum SceneType {
   forest,
 }
 
-/// The game data
-class Data {
-  static String hero = 'bunny';
-  static SceneType curScene = SceneType.outdoor;
+enum HeroType {
+  bunny,
+  dog,
+}
 
-  static Map<SceneType, Map<String, dynamic>> scenes = {
-    SceneType.outdoor: {
-      'locked': false,
-      'highscore': 0,
-    },
-  };
+/// The game data utilities
+@JsonSerializable()
+class Data {
+  Data({
+    this.hero = HeroType.bunny,
+    this.curScene = SceneType.outdoor,
+  }) {
+    scenes = {
+      SceneType.outdoor: {
+        'unlocked': true,
+        'highscore': 0,
+      }
+    };
+  }
+
+  HeroType hero;
+  SceneType curScene;
+  late Map<SceneType, Map<String, dynamic>> scenes;
+
+  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
+
+  factory Data.fromSave(SharedPreferences prefs) {
+    String data = prefs.get('data').toString();
+
+    return prefs.get('data') == null
+        ? Data()
+        : Data.fromJson(
+            jsonDecode(data),
+          );
+  }
+
+  Map<String, dynamic> toJson() => _$DataToJson(this);
+
+  void save() async {
+    String json = jsonEncode(toJson());
+    var prefs = await SharedPreferences.getInstance();
+
+    prefs.setString('data', json);
+  }
+
+  void loadFromSave() async {
+    //var json = await rootBundle.loadString('assets/data.json');
+    //var restoredData = Data.fromJson(jsonDecode(json));
+    //print(restoredData);
+  }
 
   /// Add a scene
-  static bool addScene(SceneType sceneType) {
+  bool addScene(SceneType sceneType) {
     if (scenes.containsKey(sceneType)) return false;
-    scenes.putIfAbsent(sceneType, () => {'locked': true, 'highscore': 0});
+    scenes.putIfAbsent(sceneType, () => {'unlocked': false, 'highscore': 0});
     return true;
   }
 
-  /// Unlock a scene
-  static bool unlockScene(SceneType sceneType) {
+  /// Unlock a scene. Return true if a scene was unlocked, false otherwise
+  bool unlockScene(SceneType sceneType) {
     if (!scenes.containsKey(sceneType)) return false;
-    var locked = scenes[sceneType]!['locked'];
-    if (!locked) return false;
-    scenes[sceneType]!['locked'] = false;
+    var unlocked = scenes[sceneType]!['unlocked'];
+    if (unlocked) return false;
+    scenes[sceneType]!['unlocked'] = false;
     return true;
   }
 
-  /// Update high score
-  static void updateHighscore(SceneType sceneType, int score) {
-    final high = Data.scenes[sceneType]!['highscore'];
+  /// Update high score for current scene
+  void updateHighscore(int score) {
+    final high = scenes[curScene]!['highscore'];
+
     if (score > high) {
-      Data.scenes[sceneType]!['highscore'] = score;
+      scenes[curScene]!['highscore'] = score;
     }
   }
 
@@ -57,6 +103,7 @@ class Data {
       '11_background.png',
     ],
     SceneType.forest: [
+      '00_ground.png',
       '01_Mist.png',
       '02_Bushes.png',
       '03_Particles.png',

@@ -31,9 +31,9 @@ class Background extends ParallaxComponent<SnufflesGame> {
 
   Future<void> resetTo(SceneType scene) async {
     // Load file images
-    String folder = scene.toString().split('.').last;
+    String path = scene.toString().split('.').last + '/background/';
     imageData = Data.bgFilenames[scene]!
-        .map((e) => ParallaxImageData('$folder/$e'))
+        .map((e) => ParallaxImageData('$path$e'))
         .toList();
 
     currentImages.clear();

@@ -6,34 +6,32 @@ import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/ground.dart';
-import 'package:snuffles_run/components/obstacle.dart';
 import 'package:snuffles_run/components/obstacle_spawner.dart';
 import 'package:snuffles_run/components/score_text.dart';
 import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game_state.dart';
+import 'package:snuffles_run/screens/cutscene.dart';
 import 'package:snuffles_run/screens/game_map.dart';
-import 'package:snuffles_run/screens/main_menu.dart';
+import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/screens/pause_menu.dart';
 import 'components/background.dart';
 
-class Game extends StatelessWidget {
-  const Game({Key? key, required this.game}) : super(key: key);
-  final SnufflesGame game;
+class GameLoader extends StatelessWidget {
+  const GameLoader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: GameWidget(
-        game: game,
-        //Work in progress loading screen on game start
+        // Create the game
+        game: SnufflesGame(data: playerData),
         loadingBuilder: (context) => const Material(
           child: Center(
             child: CircularProgressIndicator(),
           ),
         ),
-        //Work in progress error handling
         errorBuilder: (context, ex) {
           //Print the error in th dev console
           debugPrint(ex.toString());
@@ -45,9 +43,10 @@ class Game extends StatelessWidget {
           );
         },
         overlayBuilderMap: {
-          'main menu': (context, SnufflesGame game) => const MainMenu(),
+          //'main menu': (context, SnufflesGame game) => const MainMenu(),
           'pause': (context, SnufflesGame game) => PauseMenu(game: game),
           'map': (context, SnufflesGame game) => GameMap(game: game),
+          'cutscene': (context, SnufflesGame game) => CutScene(game: game),
         },
       ),
     );
@@ -56,12 +55,17 @@ class Game extends StatelessWidget {
 
 /// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  // The bunny main hero
+  SnufflesGame({required this.data});
+
+  // Player data
+  Data data;
+
+  // The main hero
   late SnufflesComponent snuffles;
+  Background background = Background(SceneType.outdoor);
 
   // The main obstacle spawner
   final spawner = ObstacleSpawner();
-  var background = Background(Data.curScene);
   final ground = Ground();
   double score = 0;
 
@@ -72,6 +76,11 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   Future<void> onLoad() async {
     await super.onLoad();
 
+    // // Load save data
+    // var prefs = await SharedPreferences.getInstance();
+    // data = Data.fromSave(prefs);
+
+    // TODO: Fix this Load audio
     FlameAudio.bgm.initialize();
     await FlameAudio.bgm
         .loadAll(['music/Dark Beach.mp3', 'music/Paradise.mp3']);
@@ -82,7 +91,8 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
       await loadArtboard(RiveFile.asset('assets/images/snuffles.riv')),
     );
 
-    // Add background first
+    // Add background before other components
+    background = Background(data.curScene);
     await add(background);
     await add(ground);
     add(ScoreText());
@@ -96,22 +106,27 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
   @override
   void update(double dt) {
-    // Increase the score
-    score += dt;
     super.update(dt);
+
+    if (GameState.state == PlayState.playing) {
+      // Increase the score
+      score += dt;
+    }
   }
 
   @override
   void onTapDown(TapDownInfo info) {
-    if (snuffles.playerState != PlayerState.jumping) {
-      snuffles.jump();
+    if (GameState.state == PlayState.playing) {
+      if (snuffles.playerState != PlayerState.jumping) {
+        snuffles.jump();
+      }
     }
   }
 
   /// Called by obstacle when the level is finished
   void onLevelComplete() async {
     add(GameText('Level Complete'));
-    goScene(Data.curScene);
+    goScene(data.curScene);
   }
 
   /// Called by obstacle when wave is finished
@@ -121,43 +136,44 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
       background.addParallaxLayer();
     }
 
+    // Start next wave to get correct wavenumber
     spawner.nextWave();
+    spawner.start();
 
-    if (spawner.waveNumber == 5 && Data.addScene(SceneType.forest)) {
+    // Display achievement message
+    if (spawner.waveNumber == 5 && data.addScene(SceneType.forest)) {
       add(GameText('New Scene!'));
-    } else if (spawner.waveNumber == 10 && Data.unlockScene(SceneType.forest)) {
+    } else if (spawner.waveNumber == 10 && data.unlockScene(SceneType.forest)) {
       add(GameText('Scene Unlocked!'));
     } else {
       add(GameText('Wave ${spawner.waveNumber}'));
     }
-    spawner.start();
   }
 
+  /// Restart the game
   void restart() async {
-    GameState.playState = PlayState.playing;
-    await background.resetTo(Data.curScene);
+    GameState.state = PlayState.playing;
+    await background.resetTo(data.curScene);
     spawner.restart();
     score = 0;
     add(GameText('Wave ${spawner.waveNumber}'));
   }
 
-  // Go to the correct game scene
+  /// Go to the correct game scene
   void goScene(SceneType scene) async {
-    Data.curScene = SceneType.outdoor;
-    restart();
+    data.curScene = scene;
     resumeEngine();
+    restart();
   }
 
   /// Called when bunny collides with obstacle
-  void gameOver() {
-    //camera.zoom = 2;
-    //camera.followComponent(snuffles);
-    GameState.playState = PlayState.paused;
-    // stop background parallax
-    background.stop();
-    removeAll(children.whereType<Obstacle>());
-    // determine high score
-    Data.updateHighscore(Data.curScene, spawner.waveNumber);
+  void onGameOver() async {
+    // camera.followComponent(snuffles);
+    // camera.zoom = 2;
+    // background.stop();
+    GameState.state = PlayState.paused;
+    data.updateHighscore(spawner.waveNumber);
+    data.save();
     pauseEngine();
     overlays.add('map');
   }

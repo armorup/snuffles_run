@@ -4,7 +4,7 @@ enum PlayState { paused, playing, loading }
 /// State of the game to track global infomration.
 class GameState {
   /// Current playing state.
-  static PlayState playState = PlayState.loading;
+  static PlayState state = PlayState.loading;
 
   /// Show or hide debug infromation of flame.
   static bool showDebugInfo = false;

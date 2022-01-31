@@ -1,0 +1,10 @@
+{
+  "hero": 0,
+  "curScene": 0,
+  "scenes": {
+    "0": {
+      "unlocked": true,
+      "highscore": 0
+    }
+  }
+}

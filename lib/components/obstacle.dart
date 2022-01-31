@@ -12,7 +12,7 @@ class Obstacle extends SpriteComponent
   /// Delay factor is a value between 0 (no start delay) and 1
   Obstacle({
     this.delayFactor = 0,
-    this.speedFactor = 1,
+    this.speedScale = 1,
   }) {
     size = Vector2.all(50);
     anchor = Anchor.bottomLeft;
@@ -21,8 +21,10 @@ class Obstacle extends SpriteComponent
   }
 
   // Higher speed factor means faster obstacle
-  var speedFactor = 1;
+  var speedScale = 1;
   var _velocity = Vector2(-250, 0);
+
+  // How much to change velocity each increase
   final _velocityDelta = Vector2(-40, 0);
 
   bool _collided = false;
@@ -37,17 +39,21 @@ class Obstacle extends SpriteComponent
   Future<void> onLoad() async {
     // Load random stone sprite images
     // TODO: Load all game images once in main game
+
     var numImages = 5;
     var imageNames = <String>[];
+    var scene = gameRef.data.curScene.toString().split('.').last;
+    var path = '$scene/obstacles/';
+
     for (var i = 0; i < numImages; i++) {
-      imageNames.add('stone0${i + 1}.png');
+      imageNames.add('${path}obst_${i + 1}.png');
       await gameRef.images.load(imageNames[i]);
     }
     var r = Random().nextInt(numImages);
     sprite = Sprite(gameRef.images.fromCache(imageNames[r]));
 
     // Set obstacle velocity
-    _velocity += _velocityDelta * speedFactor.toDouble();
+    _velocity += _velocityDelta * speedScale.toDouble();
 
     addHitbox(HitboxRectangle(relation: Vector2(0.8, 0.8)));
     return super.onLoad();
@@ -59,19 +65,20 @@ class Obstacle extends SpriteComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (other is SnufflesComponent) {
+    if (other is SnufflesComponent && !_collided) {
       _collided = true;
 
-      // Trying to remove this obstacle after collision
-      position = Vector2(-1000, 0);
-
-      gameRef.gameOver();
+      // TODO: How to fix this?
+      position.x = -1000;
+      gameRef.onGameOver();
     }
   }
 
   @override
   void update(double dt) {
-    if (GameState.playState != PlayState.playing) return;
+    super.update(dt);
+
+    if (GameState.state != PlayState.playing) return;
     if (_collided) return;
 
     // move obstacle
@@ -89,7 +96,6 @@ class Obstacle extends SpriteComponent
         gameRef.onWaveComplete();
       }
     }
-
     super.update(dt);
   }
 }

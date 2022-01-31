@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flame/components.dart';
-import 'package:snuffles_run/components/game_text.dart';
+import 'package:flame_rive/flame_rive.dart';
+import 'package:rive/rive.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
 
@@ -30,7 +31,7 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
       // The first obstacle has zero delay
       waves.add([0]);
       for (var j = 1; j < numObstacles; j++) {
-        waves[i].add(Random().nextDouble().clamp(0.3, 0.6));
+        waves[i].add(Random().nextDouble().clamp(0.3, 0.5));
       }
     }
     _launcher.loadAll(waves: waves);
@@ -41,7 +42,7 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
     _launcher.reset();
     waveNumber = _launcher._waveNumber;
     // remove all obstacles from game
-    removeAll(gameRef.children.whereType<Obstacle>());
+
     _loadTestWaves();
     start();
   }
@@ -86,8 +87,17 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   final double _waveDelay = 2;
   double _timer = 0;
 
+  var artboard = Artboard();
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    artboard = await loadArtboard(
+        RiveFile.asset('assets/images/outdoor/obstacles/stone.riv'));
+  }
+
   // Load launcher with a single list of delays
-  void load({required List<double> wave}) {
+  void load({required List<double> wave}) async {
     _curWaves.add(wave
         .map(
           (delay) => Obstacle(delayFactor: delay),
@@ -104,7 +114,7 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
             .map(
               (delay) => Obstacle(
                 delayFactor: delay,
-                speedFactor: waveNum,
+                speedScale: waveNum,
               ),
             )
             .toList(),
@@ -137,6 +147,8 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   }
 
   void reset() {
+    // Remove any remaining obstacles
+    removeAll(children.whereType<Obstacle>());
     _timer = 0;
     _curWaves.clear();
     _curWave.clear();

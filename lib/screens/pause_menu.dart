@@ -26,12 +26,12 @@ class PauseMenu extends StatelessWidget {
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
-                if (GameState.playState == PlayState.paused)
+                if (GameState.state == PlayState.paused)
                   ElevatedButton(
                     onPressed: () => game.overlays.remove('pause'),
                     child: const Text('Resume'),
                   ),
-                if (GameState.playState == PlayState.paused)
+                if (GameState.state == PlayState.paused)
                   const Padding(padding: EdgeInsets.only(top: 10)),
                 ElevatedButton(
                   onPressed: () {
@@ -70,7 +70,7 @@ class PauseMenu extends StatelessWidget {
   }
 
   String _getTitle() {
-    if (GameState.playState == PlayState.paused) {
+    if (GameState.state == PlayState.paused) {
       return 'Pause';
     } else {
       return 'Winner';

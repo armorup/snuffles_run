@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/data.dart';
 import 'package:snuffles_run/game.dart';
 
@@ -8,8 +9,8 @@ class GameMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numScenes = Data.scenes.length;
-    final scenes = Data.scenes.keys
+    final numScenes = game.data.scenes.length;
+    final scenes = game.data.scenes.keys
         .map(
           (sceneType) => Scene(
             game: game,
@@ -29,7 +30,8 @@ class GameMap extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   game.overlays.remove('map');
-                  game.overlays.add('main menu');
+                  //game.overlays.add('main menu');
+                  context.go('/');
                 },
                 child: const Text('Exit to Main Menu'),
               ),
@@ -61,46 +63,49 @@ class Scene extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sceneName = sceneType.toString().split('.').last;
-    final locked = Data.scenes[sceneType]!['locked'];
-    final highScore = Data.scenes[sceneType]!['highscore'];
-    final scoreHeader = locked ? '' : 'High Score';
-    final scoreText = locked ? '' : '$highScore';
+    final unlocked = game.data.scenes[sceneType]!['unlocked'];
+    final highScore = game.data.scenes[sceneType]!['highscore'];
+    final scoreHeader = unlocked ? 'High Score' : '';
+    final scoreText = unlocked ? '$highScore' : '';
+
+    final path = 'assets/images/$sceneName/obstacles/';
     return SizedBox(
       width: MediaQuery.of(context).size.width / 4,
       child: ElevatedButton(
         onPressed: () {
-          if (locked) return;
+          if (!unlocked) return;
           game.overlays.remove('map');
           game.goScene(sceneType);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset('${path}obst_1.png'),
             Text(
               sceneName,
               style: const TextStyle(fontSize: 30),
             ),
             const SizedBox(height: 15),
-            locked
-                ? const Icon(
+            unlocked
+                ? const SizedBox()
+                : const Icon(
                     Icons.lock,
                     size: 40,
-                  )
-                : const SizedBox(),
+                  ),
             const SizedBox(height: 15),
-            locked
-                ? const SizedBox()
-                : Text(
+            unlocked
+                ? Text(
                     scoreHeader,
                     style: const TextStyle(fontSize: 20),
-                  ),
+                  )
+                : const SizedBox(),
             const SizedBox(height: 7),
-            locked
-                ? const SizedBox()
-                : Text(
+            unlocked
+                ? Text(
                     scoreText,
                     style: const TextStyle(fontSize: 40),
-                  ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),
