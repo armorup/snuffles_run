@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'data.dart';
+part of 'player_data.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Data _$DataFromJson(Map<String, dynamic> json) => Data(
+PlayerData _$PlayerDataFromJson(Map<String, dynamic> json) => PlayerData(
       hero: $enumDecodeNullable(_$HeroTypeEnumMap, json['hero']) ??
           HeroType.bunny,
       curScene: $enumDecodeNullable(_$SceneTypeEnumMap, json['curScene']) ??
@@ -16,7 +16,8 @@ Data _$DataFromJson(Map<String, dynamic> json) => Data(
             $enumDecode(_$SceneTypeEnumMap, k), e as Map<String, dynamic>),
       );
 
-Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
+Map<String, dynamic> _$PlayerDataToJson(PlayerData instance) =>
+    <String, dynamic>{
       'hero': _$HeroTypeEnumMap[instance.hero],
       'curScene': _$SceneTypeEnumMap[instance.curScene],
       'scenes':
@@ -31,4 +32,5 @@ const _$HeroTypeEnumMap = {
 const _$SceneTypeEnumMap = {
   SceneType.outdoor: 'outdoor',
   SceneType.forest: 'forest',
+  SceneType.backyard: 'backyard',
 };

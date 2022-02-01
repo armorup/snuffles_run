@@ -5,7 +5,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:snuffles_run/data.dart';
+import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/screens/achievements.dart';
 import 'package:snuffles_run/screens/endless.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
@@ -15,8 +15,7 @@ import 'package:snuffles_run/screens/playmode.dart';
 import 'game.dart';
 
 // Single instance of player data here
-// TODO: use a provider?
-Data playerData = Data();
+PlayerData playerData = PlayerData();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +25,7 @@ void main() async {
   // Load saved data
   String prefs = await SharedPreferences.getInstance()
       .then((info) => info.get('data').toString());
-  playerData = Data.fromJson(jsonDecode(prefs));
+  playerData = PlayerData.fromJson(jsonDecode(prefs));
 
   runApp(
     MaterialApp(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:snuffles_run/data.dart';
+import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/game.dart';
 
 class GameMap extends StatelessWidget {
@@ -13,7 +13,7 @@ class GameMap extends StatelessWidget {
     final numScenes = game.data.scenes.length;
     final scenes = game.data.scenes.keys
         .map(
-          (sceneType) => Scene(
+          (sceneType) => SceneCard(
             game: game,
             sceneType: sceneType,
           ),
@@ -55,8 +55,8 @@ class GameMap extends StatelessWidget {
 }
 
 /// The scene to show on map
-class Scene extends StatelessWidget {
-  const Scene({Key? key, required this.game, required this.sceneType})
+class SceneCard extends StatelessWidget {
+  const SceneCard({Key? key, required this.game, required this.sceneType})
       : super(key: key);
   final SnufflesGame game;
   final SceneType sceneType;

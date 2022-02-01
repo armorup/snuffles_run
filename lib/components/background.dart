@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:snuffles_run/game.dart';
-import 'package:snuffles_run/data.dart';
+import 'package:snuffles_run/game_data.dart';
 
 class Background extends ParallaxComponent<SnufflesGame> {
   Background(this.scene);
@@ -32,7 +32,7 @@ class Background extends ParallaxComponent<SnufflesGame> {
   Future<void> resetTo(SceneType scene) async {
     // Load file images
     String path = scene.toString().split('.').last + '/background/';
-    imageData = Data.bgFilenames[scene]!
+    imageData = GameData.bgFilenames[scene]!
         .map((e) => ParallaxImageData('$path$e'))
         .toList();
 

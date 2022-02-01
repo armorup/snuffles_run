@@ -20,11 +20,12 @@ dependencies:
   go_router: ^3.0.1
   google_fonts: ^2.2.0
   json_annotation: ^4.4.0
-  json_serializable: ^6.1.4
+
   rive: ^0.7.30
   shared_preferences: ^2.0.12
 
 dev_dependencies:
+  json_serializable: ^6.1.4
   build_runner: ^2.1.7
   flutter_lints: ^1.0.0
   flutter_test:

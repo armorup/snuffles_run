@@ -9,7 +9,8 @@ import 'package:snuffles_run/components/ground.dart';
 import 'package:snuffles_run/components/obstacle_spawner.dart';
 import 'package:snuffles_run/components/score_text.dart';
 import 'package:snuffles_run/components/snuffles.dart';
-import 'package:snuffles_run/data.dart';
+import 'package:snuffles_run/game_data.dart';
+import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/game_state.dart';
 import 'package:snuffles_run/screens/cutscene.dart';
 import 'package:snuffles_run/screens/debug.dart';
@@ -62,7 +63,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   bool get debugMode => false;
 
   // Player data
-  Data data;
+  PlayerData data;
 
   // The main hero
   late SnufflesComponent snuffles;
@@ -99,7 +100,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     add(spawner);
 
     if (debugMode) {
-      data = Data();
+      data = PlayerData();
       overlays.add('debug');
     } else {
       // Start the game
@@ -153,7 +154,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     spawner.start();
 
     // Display achievement message
-    if (spawner.waveNumber == 5 && data.addScene(SceneType.forest)) {
+    if (spawner.waveNumber == 5 && data.discoverScene(SceneType.forest)) {
       add(GameText('New Scene!'));
     } else if (spawner.waveNumber == 10 && data.unlockScene(SceneType.forest)) {
       add(GameText('Scene Unlocked!'));
