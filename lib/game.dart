@@ -4,11 +4,10 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
+import 'package:snuffles_run/components/scene.dart';
 import 'package:snuffles_run/components/game_text.dart';
-import 'package:snuffles_run/components/ground.dart';
-import 'package:snuffles_run/components/obstacle_spawner.dart';
 import 'package:snuffles_run/components/score_text.dart';
-import 'package:snuffles_run/components/snuffles.dart';
+import 'package:snuffles_run/components/hero_component.dart';
 import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/game_state.dart';
@@ -17,7 +16,6 @@ import 'package:snuffles_run/screens/debug.dart';
 import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/screens/pause_menu.dart';
-import 'components/background.dart';
 
 class GameLoader extends StatelessWidget {
   const GameLoader({Key? key}) : super(key: key);
@@ -28,7 +26,7 @@ class GameLoader extends StatelessWidget {
       onWillPop: () async => false,
       child: GameWidget(
         // Create the game
-        game: SnufflesGame(data: playerData),
+        game: SnufflesGame(playerData: playerData),
         loadingBuilder: (context) => const Material(
           child: Center(
             child: CircularProgressIndicator(),
@@ -57,50 +55,38 @@ class GameLoader extends StatelessWidget {
 
 /// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  SnufflesGame({required this.data});
+  SnufflesGame({required this.playerData});
 
   @override
   bool get debugMode => false;
 
-  // Player data
-  PlayerData data;
-
-  // The main hero
-  late SnufflesComponent snuffles;
-  Background background = Background(SceneType.outdoor);
-
-  // The main obstacle spawner
-  final spawner = ObstacleSpawner();
-  final ground = Ground();
+  PlayerData playerData;
   double score = 0;
+
+  late HeroComponent hero;
+  late Scene scene = Scene(sceneType: playerData.curScene);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     GameState.state = PlayState.loading;
 
-    // TODO: Fix this Load audio
-    FlameAudio.bgm.initialize();
-    await FlameAudio.bgm
-        .loadAll(['music/Dark Beach.mp3', 'music/Paradise.mp3']);
-    //FlameAudio.bgm.play('music/Paradise.mp3');
-    FlameAudio.audioCache.loadAll(['sfx/Abstract1.mp3', 'sfx/Abstract2.mp3']);
+    loadAudio();
 
-    snuffles = SnufflesComponent(
-      await loadArtboard(RiveFile.asset('assets/images/snuffles.riv')),
-    );
+    // Load Scene
+    await add(scene);
 
-    // Add background before other components
-    background = Background(data.curScene);
-    await add(background);
-    await add(ground);
-    add(ScoreText());
-    add(snuffles);
-    spawner.position = Vector2(size.x + 20, ground.y);
-    add(spawner);
+    // Need to load all rive artboards before creating rive component
+    var artboard =
+        await loadArtboard(RiveFile.asset('assets/images/heros/bunny.riv'));
+    await add(RiveComponent(artboard: artboard));
+    hero = HeroComponent(playerData.hero);
+
+    await add(ScoreText());
+    await add(hero);
 
     if (debugMode) {
-      data = PlayerData();
+      playerData = PlayerData();
       overlays.add('debug');
     } else {
       // Start the game
@@ -111,10 +97,10 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   /// Restart the game
   void restart() async {
     GameState.state = PlayState.playing;
-    await background.resetTo(data.curScene);
-    spawner.restart();
+    await scene.background.reset();
+    scene.spawner.restart();
     score = 0;
-    add(GameText('Wave ${spawner.waveNumber}'));
+    add(GameText('Wave ${scene.spawner.waveNumber}'));
   }
 
   @override
@@ -130,8 +116,8 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   @override
   void onTapDown(TapDownInfo info) {
     if (GameState.state == PlayState.playing) {
-      if (snuffles.playerState != PlayerState.jumping) {
-        snuffles.jump();
+      if (hero.playerState != PlayerState.jumping) {
+        hero.jump();
       }
     }
   }
@@ -139,33 +125,35 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   /// Called by obstacle when the level is finished
   void onLevelComplete() async {
     add(GameText('Level Complete'));
-    goScene(data.curScene);
+    goScene(playerData.curScene);
   }
 
   /// Called by obstacle when wave is finished
   void onWaveComplete() async {
     // Change after first wave, then every 3 waves
-    if (spawner.waveNumber == 1 || spawner.waveNumber % 3 == 0) {
-      background.addParallaxLayer();
+    if (scene.spawner.waveNumber == 1 || scene.spawner.waveNumber % 3 == 0) {
+      scene.background.addParallaxLayer();
     }
 
     // Start next wave to get correct wavenumber
-    spawner.nextWave();
-    spawner.start();
+    scene.spawner.nextWave();
+    scene.spawner.start();
 
     // Display achievement message
-    if (spawner.waveNumber == 5 && data.discoverScene(SceneType.forest)) {
+    if (scene.spawner.waveNumber == 5 &&
+        playerData.discoverScene(SceneType.forest)) {
       add(GameText('New Scene!'));
-    } else if (spawner.waveNumber == 10 && data.unlockScene(SceneType.forest)) {
+    } else if (scene.spawner.waveNumber == 10 &&
+        playerData.unlockScene(SceneType.forest)) {
       add(GameText('Scene Unlocked!'));
     } else {
-      add(GameText('Wave ${spawner.waveNumber}'));
+      add(GameText('Wave ${scene.spawner.waveNumber}'));
     }
   }
 
   /// Go to the correct game scene
   void goScene(SceneType scene) async {
-    data.curScene = scene;
+    playerData.curScene = scene;
     resumeEngine();
     restart();
   }
@@ -176,9 +164,18 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     // camera.zoom = 2;
     // background.stop();
     GameState.state = PlayState.paused;
-    data.updateHighscore(spawner.waveNumber);
-    data.save();
+    playerData.updateHighscore(scene.spawner.waveNumber);
+    playerData.save();
     pauseEngine();
     overlays.add('map');
+  }
+
+  // TODO: Fix this Load audio
+  void loadAudio() async {
+    FlameAudio.bgm.initialize();
+    await FlameAudio.bgm
+        .loadAll(['music/Dark Beach.mp3', 'music/Paradise.mp3']);
+    //FlameAudio.bgm.play('music/Paradise.mp3');
+    FlameAudio.audioCache.loadAll(['sfx/Abstract1.mp3', 'sfx/Abstract2.mp3']);
   }
 }
