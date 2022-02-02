@@ -4,8 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame_svg/flame_svg.dart';
+import 'package:snuffles_run/components/hero_component.dart';
 import 'package:snuffles_run/game.dart';
-import 'package:snuffles_run/components/snuffles.dart';
 import 'package:snuffles_run/game_state.dart';
 
 class Obstacle extends SpriteComponent
@@ -43,7 +43,7 @@ class Obstacle extends SpriteComponent
 
     var numImages = 5;
     var imageNames = <String>[];
-    var scene = gameRef.data.curScene.toString().split('.').last;
+    var scene = gameRef.playerData.curScene.toString().split('.').last;
     var path = '$scene/obstacles/';
 
     for (var i = 0; i < numImages; i++) {
@@ -54,8 +54,9 @@ class Obstacle extends SpriteComponent
     sprite = Sprite(gameRef.images.fromCache(imageNames[r]));
 
     // try svg
+
     final svgInstance =
-        await Svg.load('images/outdoor/obstacles/game_map_image.svg');
+        await Svg.load('images/outdoor/obstacles/game_card.svg');
     final rock = SvgComponent.fromSvg(svgInstance)
       ..position = position
       ..size = (Vector2.all(100))
@@ -66,6 +67,7 @@ class Obstacle extends SpriteComponent
     _velocity += _velocityDelta * speedScale.toDouble();
 
     addHitbox(HitboxRectangle(relation: Vector2(0.8, 0.8)));
+
     return super.onLoad();
   }
 
@@ -75,7 +77,7 @@ class Obstacle extends SpriteComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    if (other is SnufflesComponent && !_collided) {
+    if (other is HeroComponent && !_collided) {
       _collided = true;
 
       // TODO: How to fix this?
