@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'game_data.dart';
+import 'package:snuffles_run/game_data.dart';
 
 part 'player_data.g.dart';
 
@@ -25,6 +24,8 @@ class PlayerData {
   HeroType hero;
   SceneType curScene;
   late Map<SceneType, Map<String, dynamic>> scenes;
+
+  String get scene => curScene.toString().split('.').last;
 
   /// Generated code for reading from/to json
   factory PlayerData.fromJson(Map<String, dynamic> json) =>

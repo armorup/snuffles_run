@@ -1,11 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:snuffles_run/game_data.dart';
 
 part 'obstacle_model.g.dart';
 
 @JsonSerializable()
 class ObstacleModel {
-  final ObstacleType type;
+  final String type;
   final String filename;
 
   ObstacleModel({required this.type, required this.filename});
@@ -15,14 +14,14 @@ class ObstacleModel {
   Map<String, dynamic> toJson() => _$ObstacleModelToJson(this);
 }
 
-class ObstaclesModelList {
-  final List<ObstacleModel> obstacleModels;
+// class ObstaclesModelList {
+//   final List<ObstacleModel> obstacleModels;
 
-  ObstaclesModelList({required this.obstacleModels});
+//   ObstaclesModelList({required this.obstacleModels});
 
-  factory ObstaclesModelList.fromJson(List<dynamic> json) => ObstaclesModelList(
-        obstacleModels: json
-            .map((e) => ObstacleModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
-}
+//   factory ObstaclesModelList.fromJson(List<dynamic> json) => ObstaclesModelList(
+//         obstacleModels: json
+//             .map((e) => ObstacleModel.fromJson(e as Map<String, dynamic>))
+//             .toList(),
+//       );
+// }

@@ -26,4 +26,5 @@ const _$SceneTypeEnumMap = {
   SceneType.outdoor: 'outdoor',
   SceneType.forest: 'forest',
   SceneType.backyard: 'backyard',
+  SceneType.kitchen: 'kitchen',
 };

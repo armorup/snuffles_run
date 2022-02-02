@@ -1,1 +1,103 @@
-{}
+{
+  "heros": [
+    {
+      "type": "bunny",
+      "filename": "bunny.riv"
+    }
+  ],
+  "scenes": [
+    {
+      "type": "outdoor",
+      "obstacles": [
+        {
+          "type": "rock",
+          "filename": "rock.svg"
+        }
+      ],
+      "background": {
+        "filenames": [
+          "01_ground.png",
+          "02_trees and bushes.png",
+          "03_distant_trees.png",
+          "04_bushes.png",
+          "05_hill1.png",
+          "06_hill2.png",
+          "07_huge_clouds.png",
+          "08_clouds.png",
+          "09_distant_clouds1.png",
+          "10_distant_clouds.png",
+          "11_background.png"
+        ]
+      }
+    },
+    {
+      "type": "forest",
+      "obstacles": [
+        {
+          "type": "gem",
+          "filename": "gem.png"
+        }
+      ],
+      "background": {
+        "filenames": [
+          "00_ground.png",
+          "01_Mist.png",
+          "02_Bushes.png",
+          "03_Particles.png",
+          "04_Forest.png",
+          "05_Particles.png",
+          "06_Forest.png",
+          "07_Forest.png",
+          "08_Forest.png",
+          "09_Forest.png",
+          "10_Sky.png"
+        ]
+      }
+    },
+    {
+      "type": "backyard",
+      "obstacles": [
+        {
+          "type": "bird",
+          "filename": "bird.svg"
+        },
+        {
+          "type": "butterfly",
+          "filename": "butterfly.svg"
+        },
+        {
+          "type": "dirt",
+          "filename": "dirt.svg"
+        },
+        {
+          "type": "flies",
+          "filename": "flies.svg"
+        }
+      ],
+      "background": {
+        "filenames": [
+          "01_ground.png",
+          "02_petals.png",
+          "03_bushes.png",
+          "04_foregroundtrees.png",
+          "05_grass.png",
+          "06_backgroundtrees.png",
+          "07_clouds.png",
+          "08_sky.png"
+        ]
+      }
+    },
+    {
+      "type": "kitchen",
+      "obstacles": [
+        {
+          "type": "bird",
+          "filename": "bird.svg"
+        }
+      ],
+      "background": {
+        "filenames": ["01_furniture.png", "02_wall.png"]
+      }
+    }
+  ]
+}

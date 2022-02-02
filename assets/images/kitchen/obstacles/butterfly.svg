@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!-- Created with Vectornator for iOS (http://vectornator.io/) --><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg height="100%" style="fill-rule:nonzero;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;" version="1.1" viewBox="0 0 200 200" width="100%" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:vectornator="http://vectornator.io" xmlns:xlink="http://www.w3.org/1999/xlink">
+<metadata>
+<vectornator:setting key="IsTimeLapseWatermarkDisabled" value="false"/>
+<vectornator:setting key="UndoHistoryDisabled" value="true"/>
+<vectornator:setting key="VNDimensionsVisible" value="true"/>
+<vectornator:setting key="VNSnapToGuides" value="true"/>
+<vectornator:setting key="WDCMYKEnabledKey" value="false"/>
+<vectornator:setting key="WDDisplayWhiteBackground" value="false"/>
+<vectornator:setting key="WDDynamicGuides" value="false"/>
+<vectornator:setting key="WDGuidesVisible" value="true"/>
+<vectornator:setting key="WDIsolateActiveLayer" value="false"/>
+<vectornator:setting key="WDOutlineMode" value="false"/>
+<vectornator:setting key="WDRulersVisible" value="true"/>
+<vectornator:setting key="WDSnapToEdges" value="false"/>
+<vectornator:setting key="WDSnapToGrid" value="false"/>
+<vectornator:setting key="WDSnapToPoints" value="false"/>
+<vectornator:setting key="WDUnits" value="Points"/>
+</metadata>
+<defs/>
+<g id="Layer 2" vectornator:layerName="Layer 2">
+<path d="M77.5464 125.224C77.5464 125.224 128.672 133.4 142.766 139.676C156.861 145.953 161.03 173.437 148.083 181.127C135.136 188.816 70.9895 149.105 70.9895 149.105L77.5464 125.224Z" fill="#f3a4aa" opacity="1" stroke="#d38289" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M70.591 147.863C70.591 147.863 76.2278 27.5534 96.6467 18.6575C117.066 9.76165 158.78 79.9783 152.267 112.28C145.753 144.581 70.591 147.863 70.591 147.863Z" fill="#f3a4aa" opacity="1" stroke="#d38289" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M58.7982 130.309L59.7477 129.503C61.9057 127.669 65.1411 127.933 66.9742 130.091L93.6996 161.553C95.5327 163.711 95.2693 166.946 93.1113 168.779L92.1618 169.586C90.0038 171.419 86.7684 171.156 84.9353 168.998L58.2099 137.536C56.3769 135.378 56.6402 132.142 58.7982 130.309Z" fill="#e9eef2" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M54.0281 104.757L60.2418 128.154" fill="none" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M44.1277 108.245L57.636 129.236" fill="none" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+</g>
+</svg>

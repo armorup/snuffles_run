@@ -8,17 +8,12 @@ part of 'obstacle_model.dart';
 
 ObstacleModel _$ObstacleModelFromJson(Map<String, dynamic> json) =>
     ObstacleModel(
-      type: $enumDecode(_$ObstacleTypeEnumMap, json['type']),
+      type: json['type'] as String,
       filename: json['filename'] as String,
     );
 
 Map<String, dynamic> _$ObstacleModelToJson(ObstacleModel instance) =>
     <String, dynamic>{
-      'type': _$ObstacleTypeEnumMap[instance.type],
+      'type': instance.type,
       'filename': instance.filename,
     };
-
-const _$ObstacleTypeEnumMap = {
-  ObstacleType.rock: 'rock',
-  ObstacleType.fork: 'fork',
-};

@@ -4,13 +4,22 @@ import 'package:flame_rive/flame_rive.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
+import 'package:snuffles_run/main.dart';
+import 'package:snuffles_run/models/obstacle_model.dart';
 
 enum SpawnState { spawning, stopped, started }
 
 /// A spawn point for game obstacles
 class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
-  ObstacleSpawner() : _launcher = Launcher();
+  ObstacleSpawner(this.obstModels)
+      : _launcher = Launcher(obstModels: obstModels);
+
+  factory ObstacleSpawner.initial() {
+    return ObstacleSpawner(gameData.scenes.first.obstacles);
+  }
+
   final Launcher _launcher;
+  final List<ObstacleModel> obstModels;
 
   SpawnState spawnState = SpawnState.stopped;
   double delayMultiplier = 5;
@@ -75,8 +84,11 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
 /// Launcher for obstacles
 class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   Launcher({
+    required this.obstModels,
     this.delayMultiplier = 5,
   });
+
+  List<ObstacleModel> obstModels;
 
   double delayMultiplier = 5;
   final List<List<Obstacle>> _curWaves = [];
@@ -97,10 +109,13 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   }
 
   // Load launcher with a single list of delays
-  void load({required List<double> wave}) async {
+  void load({required List<double> wave}) {
     _curWaves.add(wave
         .map(
-          (delay) => Obstacle(delayFactor: delay),
+          (delay) => Obstacle(
+            model: obstModels.first,
+            delayFactor: delay,
+          ),
         )
         .toList());
   }
@@ -113,6 +128,7 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
         waves[waveNum]
             .map(
               (delay) => Obstacle(
+                model: obstModels.first,
                 delayFactor: delay,
                 speedScale: waveNum,
               ),
@@ -132,7 +148,7 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
     _curWave.addAll(_curWaves.removeAt(0));
   }
 
-  // Launch the obstacle returns true if the the wave is complete
+  // Launch the obstacle. Returns true if the the wave is complete
   bool _launchWave(double dt) {
     _timer += dt;
     if (_timer > _curWave.first.delayFactor * delayMultiplier) {

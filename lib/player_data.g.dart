@@ -26,11 +26,11 @@ Map<String, dynamic> _$PlayerDataToJson(PlayerData instance) =>
 
 const _$HeroTypeEnumMap = {
   HeroType.bunny: 'bunny',
-  HeroType.dog: 'dog',
 };
 
 const _$SceneTypeEnumMap = {
   SceneType.outdoor: 'outdoor',
   SceneType.forest: 'forest',
   SceneType.backyard: 'backyard',
+  SceneType.kitchen: 'kitchen',
 };

@@ -4,13 +4,13 @@ import 'package:flame_rive/flame_rive.dart';
 import 'package:rive/rive.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/ground.dart';
+import 'package:snuffles_run/game_data.dart';
 
 enum PlayerState { idle, jumping, running }
 
-class SnufflesComponent extends RiveComponent
+class HeroComponent extends PositionComponent
     with HasGameRef<SnufflesGame>, HasHitboxes, Collidable {
-  SnufflesComponent(Artboard artboard)
-      : super(artboard: artboard, size: Vector2.all(320)) {
+  HeroComponent(HeroType heroType) : super(size: Vector2.all(320)) {
     anchor = Anchor.center;
     flipHorizontally();
   }
@@ -24,11 +24,16 @@ class SnufflesComponent extends RiveComponent
   PlayerState playerState = PlayerState.running;
 
   @override
-  Future<void>? onLoad() {
+  Future<void>? onLoad() async {
+    // Add rive component
+    var artboard =
+        await loadArtboard(RiveFile.asset('assets/images/heros/bunny.riv'));
+    await add(RiveComponent(artboard: artboard));
+
     final controller = SimpleAnimation('Running');
-    position = startPos;
     artboard.addController(controller);
 
+    position = startPos;
     addHitbox(HitboxRectangle(relation: Vector2(0.2, 0.25)));
     return super.onLoad();
   }

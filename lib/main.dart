@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flame/flame.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/screens/achievements.dart';
 import 'package:snuffles_run/screens/endless.dart';
@@ -14,13 +16,20 @@ import 'package:snuffles_run/screens/playmode.dart';
 
 import 'game.dart';
 
-// Single instance of player data here
-PlayerData playerData = PlayerData();
+// Single instance of player and game data here
+late PlayerData playerData;
+late GameData gameData;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Flame.device.setLandscape();
   await Flame.device.fullScreen();
+
+  // Load game data
+  var json = await rootBundle
+      .loadString('assets/game_data.json')
+      .then((value) => jsonDecode(value));
+  gameData = GameData.fromJson(json);
 
   // Load saved data
   String prefs = await SharedPreferences.getInstance()

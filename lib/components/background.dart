@@ -1,11 +1,17 @@
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
 import 'package:snuffles_run/game.dart';
-import 'package:snuffles_run/game_data.dart';
+import 'package:snuffles_run/main.dart';
+import 'package:snuffles_run/models/background_model.dart';
 
 class Background extends ParallaxComponent<SnufflesGame> {
-  Background(this.scene);
-  late final SceneType scene;
+  Background(this.bgModel);
+
+  factory Background.initial() {
+    return Background(gameData.scenes.first.background);
+  }
+
+  final BackgroundModel bgModel;
 
   final Vector2 _baseVelocity = Vector2(10, 0);
   final _velocityMultiplierDelta = Vector2(1.5, 0);
@@ -17,7 +23,7 @@ class Background extends ParallaxComponent<SnufflesGame> {
   Future<void> onLoad() async {
     await super.onLoad();
     // Load all parallax layers into cache from file
-    await resetTo(scene);
+    await reset();
   }
 
   /// Load images into parallax
@@ -29,11 +35,13 @@ class Background extends ParallaxComponent<SnufflesGame> {
     );
   }
 
-  Future<void> resetTo(SceneType scene) async {
+  Future<void> reset() async {
     // Load file images
-    String path = scene.toString().split('.').last + '/background/';
-    imageData = GameData.bgFilenames[scene]!
-        .map((e) => ParallaxImageData('$path$e'))
+    String path = playerData.scene + '/background/';
+    imageData = bgModel.filenames
+        .map(
+          (filename) => ParallaxImageData('$path$filename'),
+        )
         .toList();
 
     currentImages.clear();

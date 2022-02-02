@@ -7,11 +7,13 @@ import 'package:flame_svg/flame_svg.dart';
 import 'package:snuffles_run/components/hero_component.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_state.dart';
+import 'package:snuffles_run/models/obstacle_model.dart';
 
 class Obstacle extends SpriteComponent
     with HasGameRef<SnufflesGame>, HasHitboxes, Collidable {
   /// Delay factor is a value between 0 (no start delay) and 1
   Obstacle({
+    required this.model,
     this.delayFactor = 0,
     this.speedScale = 1,
   }) {
@@ -20,6 +22,8 @@ class Obstacle extends SpriteComponent
     // All Obstacles will be removed after 7 seconds
     add(RemoveEffect(delay: 7));
   }
+
+  final ObstacleModel model;
 
   // Higher speed factor means faster obstacle
   var speedScale = 1;
@@ -62,7 +66,6 @@ class Obstacle extends SpriteComponent
       ..size = (Vector2.all(100))
       ..anchor = Anchor.center;
     add(rock);
-
     // Set obstacle velocity
     _velocity += _velocityDelta * speedScale.toDouble();
 

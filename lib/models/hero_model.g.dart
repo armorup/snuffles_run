@@ -7,14 +7,11 @@ part of 'hero_model.dart';
 // **************************************************************************
 
 HeroModel _$HeroModelFromJson(Map<String, dynamic> json) => HeroModel(
-      type: $enumDecode(_$HeroTypeEnumMap, json['type']),
+      type: json['type'] as String,
+      filename: json['filename'] as String,
     );
 
 Map<String, dynamic> _$HeroModelToJson(HeroModel instance) => <String, dynamic>{
-      'type': _$HeroTypeEnumMap[instance.type],
+      'type': instance.type,
+      'filename': instance.filename,
     };
-
-const _$HeroTypeEnumMap = {
-  HeroType.bunny: 'bunny',
-  HeroType.dog: 'dog',
-};

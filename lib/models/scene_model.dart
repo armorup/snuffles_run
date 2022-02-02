@@ -18,14 +18,3 @@ class SceneModel {
       _$SceneModelFromJson(json);
   Map<String, dynamic> toJson() => _$SceneModelToJson(this);
 }
-
-class SceneModelList {
-  final List<SceneModel> scenes;
-  SceneModelList({required this.scenes});
-
-  factory SceneModelList.fromJson(List<dynamic> json) => SceneModelList(
-        scenes: json
-            .map((e) => SceneModel.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
-}

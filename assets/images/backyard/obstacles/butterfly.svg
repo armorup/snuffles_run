@@ -19,9 +19,10 @@
 </metadata>
 <defs/>
 <g id="Layer 2" vectornator:layerName="Layer 2">
-<path d="M42.9202 138.497L57.9732 73.6734L91.7551 54.7519L125.887 45.2911L154.593 95.398L150.392 137.796L42.9202 138.497Z" fill="#e9eef2" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
-<path d="M8.14034 152.409L9.77704 128.063L27.7807 113.947L81.3826 133.178L71.1532 151.386L8.14034 152.409Z" fill="#e9eef2" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
-<path d="M126.801 145.453L129.665 82.6447L140.917 65.8685L181.017 94.1016L191.86 129.7L190.018 149.749L126.801 145.453Z" fill="#e9eef2" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
-<path d="M95.7642 154.709L109.472 127.908L123.179 154.709L134.431 142.843L145.683 154.709" fill="#8fd396" opacity="1" stroke="#55a55e" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M77.5464 125.224C77.5464 125.224 128.672 133.4 142.766 139.676C156.861 145.953 161.03 173.437 148.083 181.127C135.136 188.816 70.9895 149.105 70.9895 149.105L77.5464 125.224Z" fill="#f3a4aa" opacity="1" stroke="#d38289" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M70.591 147.863C70.591 147.863 76.2278 27.5534 96.6467 18.6575C117.066 9.76165 158.78 79.9783 152.267 112.28C145.753 144.581 70.591 147.863 70.591 147.863Z" fill="#f3a4aa" opacity="1" stroke="#d38289" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M58.7982 130.309L59.7477 129.503C61.9057 127.669 65.1411 127.933 66.9742 130.091L93.6996 161.553C95.5327 163.711 95.2693 166.946 93.1113 168.779L92.1618 169.586C90.0038 171.419 86.7684 171.156 84.9353 168.998L58.2099 137.536C56.3769 135.378 56.6402 132.142 58.7982 130.309Z" fill="#e9eef2" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M54.0281 104.757L60.2418 128.154" fill="none" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<path d="M44.1277 108.245L57.636 129.236" fill="none" opacity="1" stroke="#b8bcbf" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
 </g>
 </svg>
