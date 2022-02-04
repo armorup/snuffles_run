@@ -1,27 +1,25 @@
 import 'dart:math';
 import 'package:flame/components.dart';
-import 'package:flame_rive/flame_rive.dart';
-import 'package:rive/rive.dart';
+import 'package:snuffles_run/components/scene.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
 import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/models/obstacle_model.dart';
 
-enum SpawnState { spawning, stopped, started }
+enum SpawnState { spawning, notSpawning }
 
 /// A spawn point for game obstacles
-class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
+class ObstacleSpawner extends PositionComponent
+    with HasGameRef<SnufflesGame>
+    implements Pausable {
   ObstacleSpawner(this.obstModels)
       : _launcher = Launcher(obstModels: obstModels);
-
-  factory ObstacleSpawner.initial() {
-    return ObstacleSpawner(gameData.scenes.first.obstacles);
-  }
 
   final Launcher _launcher;
   final List<ObstacleModel> obstModels;
 
-  SpawnState spawnState = SpawnState.stopped;
+  SpawnState spawnState = SpawnState.notSpawning;
+  PausedState state = PausedState.paused;
   double delayMultiplier = 5;
   int waveNumber = 0;
 
@@ -48,19 +46,33 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
   }
 
   void restart() {
-    _launcher.reset();
-    waveNumber = _launcher._waveNumber;
-    // remove all obstacles from game
-
+    _launcher._reset();
+    waveNumber = 0;
     _loadWaves();
-    start();
+    unpause();
   }
 
   // Start the spawner
-  void start() => spawnState = SpawnState.started;
+  @override
+  void unpause() {
+    state = PausedState.unpaused;
+    spawnState = SpawnState.spawning;
+  }
 
   // Stop the spawner
-  void stop() => spawnState = SpawnState.stopped;
+  @override
+  void pause() {
+    state = PausedState.paused;
+    spawnState = SpawnState.notSpawning;
+  }
+
+  void startSpawning() {
+    spawnState = SpawnState.spawning;
+  }
+
+  void stopSpawning() {
+    spawnState = SpawnState.notSpawning;
+  }
 
   // Load next wave
   void nextWave() {
@@ -72,10 +84,12 @@ class ObstacleSpawner extends PositionComponent with HasGameRef<SnufflesGame> {
   void update(double dt) {
     super.update(dt);
 
-    if (spawnState == SpawnState.started) {
-      bool waveComplete = _launcher._launchWave(dt);
-      if (waveComplete) {
-        stop();
+    if (state == PausedState.paused) return;
+
+    if (spawnState == SpawnState.spawning) {
+      bool waveIsComplete = _launcher._launchWave(dt);
+      if (waveIsComplete) {
+        spawnState = SpawnState.notSpawning;
       }
     }
   }
@@ -89,24 +103,14 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   });
 
   List<ObstacleModel> obstModels;
-
+  int _waveNumber = 0;
   double delayMultiplier = 5;
   final List<List<Obstacle>> _curWaves = [];
   final List<Obstacle> _curWave = [];
-  int _waveNumber = 0;
 
   // Delay between waves
   final double _waveDelay = 2;
   double _timer = 0;
-
-  var artboard = Artboard();
-
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    artboard = await loadArtboard(
-        RiveFile.asset('assets/images/outdoor/obstacles/stone.riv'));
-  }
 
   // Load launcher with a single list of delays
   void load({required List<double> wave}) {
@@ -123,12 +127,14 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   // Load launcher with several lists of delays representing
   // muliple waves of obstacles
   void loadAll({required List<List<double>> waves}) {
+    // Random obstacle model to load
+    var index = Random().nextInt(obstModels.length);
     for (int waveNum = 1; waveNum < waves.length; waveNum++) {
       _curWaves.add(
         waves[waveNum]
             .map(
               (delay) => Obstacle(
-                model: obstModels.first,
+                model: obstModels[index],
                 delayFactor: delay,
                 speedScale: waveNum,
               ),
@@ -138,18 +144,20 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
     }
   }
 
-  // Add a delay before launching next obstacle
-  void addLaunchDelay(double dt) => _timer -= dt;
+  /// Add a delay before launching next obstacle
+  void _addLaunchDelay(double dt) => _timer -= dt;
 
+  // Load the next wave into launcher
   void _loadNextWave() {
     if (_curWaves.isEmpty) return;
-    addLaunchDelay(_waveDelay);
+    _addLaunchDelay(_waveDelay);
     _waveNumber++;
     _curWave.addAll(_curWaves.removeAt(0));
   }
 
-  // Launch the obstacle. Returns true if the the wave is complete
+  // Launch the obstacle. Returns true if the wave is complete
   bool _launchWave(double dt) {
+    if (_curWave.isEmpty) return true;
     _timer += dt;
     if (_timer > _curWave.first.delayFactor * delayMultiplier) {
       // Spawn the obstacle
@@ -162,9 +170,9 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
     return _curWave.isEmpty;
   }
 
-  void reset() {
-    // Remove any remaining obstacles
-    removeAll(children.whereType<Obstacle>());
+  void _reset() {
+    // Remove any remaining obstacles in the launch queue
+    removeAll(children);
     _timer = 0;
     _curWaves.clear();
     _curWave.clear();

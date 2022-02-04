@@ -6,31 +6,59 @@ import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/main.dart';
 
-class Scene extends Component with HasGameRef<SnufflesGame> {
-  Scene({required this.sceneType});
-  final SceneType sceneType;
+enum PausedState { paused, unpaused, pausing, unpausing }
 
-  late Background background = Background.initial();
-  late ObstacleSpawner spawner = ObstacleSpawner.initial();
-  late Ground ground = Ground();
+abstract class Pausable {
+  void pause();
+  void unpause();
+}
+
+class Scene extends Component
+    with HasGameRef<SnufflesGame>
+    implements Pausable {
+  late Background background;
+  late ObstacleSpawner spawner;
+  late Ground ground;
+  PausedState state = PausedState.paused;
 
   @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    await loadScene();
+  void update(double dt) {
+    super.update(dt);
+
+    if (state == PausedState.paused) return;
+    if (state == PausedState.pausing) {
+      children.whereType<Pausable>().forEach((child) => child.pause());
+      state == PausedState.paused;
+    }
+    if (state == PausedState.unpausing) {
+      children.whereType<Pausable>().forEach((child) => child.unpause());
+      state == PausedState.unpaused;
+    }
   }
 
-  Future<void> loadScene() async {
+  @override
+  void pause() {
+    state = PausedState.pausing;
+  }
+
+  @override
+  void unpause() {
+    state = PausedState.unpausing;
+  }
+
+  Future<void> loadScene(SceneType sceneType) async {
     var sceneModel = gameData.getScene(sceneType);
+    removeAll(children);
+
     // Add background before other components
     background = Background(sceneModel.background);
     ground = Ground();
+
     await add(background);
     await add(ground);
     // Add spawner last
     spawner = ObstacleSpawner(sceneModel.obstacles)
       ..position = Vector2(gameRef.size.x + 20, ground.y);
-
     await add(spawner);
   }
 }

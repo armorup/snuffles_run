@@ -1,9 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flame_rive/flame_rive.dart';
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/scene.dart';
 import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/score_text.dart';
@@ -15,7 +13,6 @@ import 'package:snuffles_run/screens/cutscene.dart';
 import 'package:snuffles_run/screens/debug.dart';
 import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/main.dart';
-import 'package:snuffles_run/screens/pause_menu.dart';
 
 class GameLoader extends StatelessWidget {
   const GameLoader({Key? key}) : super(key: key);
@@ -44,7 +41,6 @@ class GameLoader extends StatelessWidget {
         },
         overlayBuilderMap: {
           'debug': (context, SnufflesGame game) => Debug(game: game),
-          'pause': (context, SnufflesGame game) => PauseMenu(game: game),
           'map': (context, SnufflesGame game) => GameMap(game: game),
           'cutscene': (context, SnufflesGame game) => CutScene(game: game),
         },
@@ -58,13 +54,13 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   SnufflesGame({required this.playerData});
 
   @override
-  bool get debugMode => false;
+  bool get debugMode => true;
 
   PlayerData playerData;
   double score = 0;
 
-  late HeroComponent hero;
-  late Scene scene = Scene(sceneType: playerData.curScene);
+  late HeroComponent hero = HeroComponent(playerData.hero);
+  late Scene scene = Scene();
 
   @override
   Future<void> onLoad() async {
@@ -73,39 +69,28 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
     loadAudio();
 
-    // Load Scene
     await add(scene);
-
-    // Need to load all rive artboards before creating rive component
-    var artboard =
-        await loadArtboard(RiveFile.asset('assets/images/heros/bunny.riv'));
-    await add(RiveComponent(artboard: artboard));
-    hero = HeroComponent(playerData.hero);
-
-    await add(ScoreText());
     await add(hero);
+    await add(ScoreText());
 
-    if (debugMode) {
-      playerData = PlayerData();
-      overlays.add('debug');
-    } else {
-      // Start the game
-      restart();
-    }
-  }
-
-  /// Restart the game
-  void restart() async {
-    GameState.state = PlayState.playing;
-    await scene.background.reset();
-    scene.spawner.restart();
-    score = 0;
-    add(GameText('Wave ${scene.spawner.waveNumber}'));
+    // if (debugMode) {
+    //   //playerData = PlayerData();
+    //   overlays.add('debug');
+    // } else {
+    // Start the game
+    goScene(playerData.curScene);
+    // }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (scene.isLoaded) {
+      GameState.state == PlayState.playing;
+    } else {
+      GameState.state == PlayState.loading;
+    }
 
     if (GameState.state == PlayState.playing) {
       // Increase the score
@@ -137,7 +122,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
     // Start next wave to get correct wavenumber
     scene.spawner.nextWave();
-    scene.spawner.start();
+    scene.spawner.startSpawning();
 
     // Display achievement message
     if (scene.spawner.waveNumber == 5 &&
@@ -152,10 +137,15 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   }
 
   /// Go to the correct game scene
-  void goScene(SceneType scene) async {
-    playerData.curScene = scene;
+  void goScene(SceneType sceneType) async {
+    playerData.curScene = sceneType;
+    score = 0;
+    await scene.loadScene(sceneType);
+    scene.unpause();
     resumeEngine();
-    restart();
+    GameState.state = PlayState.playing;
+
+    add(GameText('Wave ${scene.spawner.waveNumber}'));
   }
 
   /// Called when bunny collides with obstacle

@@ -25,13 +25,9 @@ class HeroComponent extends PositionComponent
 
   @override
   Future<void>? onLoad() async {
-    // Add rive component
     var artboard =
         await loadArtboard(RiveFile.asset('assets/images/heros/bunny.riv'));
-    await add(RiveComponent(artboard: artboard));
-
-    final controller = SimpleAnimation('Running');
-    artboard.addController(controller);
+    add(_HeroAnimationComponent(artboard: artboard));
 
     position = startPos;
     addHitbox(HitboxRectangle(relation: Vector2(0.2, 0.25)));
@@ -65,5 +61,20 @@ class HeroComponent extends PositionComponent
   void update(double dt) {
     if (playerState == PlayerState.jumping) applyGravity(dt);
     super.update(dt);
+  }
+}
+
+class _HeroAnimationComponent extends RiveComponent {
+  _HeroAnimationComponent({required artboard})
+      : super(
+          artboard: artboard,
+          size: Vector2.all(330),
+        );
+
+  @override
+  Future<void> onLoad() async {
+    final controller = SimpleAnimation('Running');
+    artboard.addController(controller);
+    await super.onLoad();
   }
 }

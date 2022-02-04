@@ -1,10 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame/parallax.dart';
+import 'package:snuffles_run/components/scene.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/models/background_model.dart';
 
-class Background extends ParallaxComponent<SnufflesGame> {
+class Background extends ParallaxComponent<SnufflesGame> implements Pausable {
   Background(this.bgModel);
 
   factory Background.initial() {
@@ -12,6 +13,7 @@ class Background extends ParallaxComponent<SnufflesGame> {
   }
 
   final BackgroundModel bgModel;
+  PausedState state = PausedState.paused;
 
   final Vector2 _baseVelocity = Vector2(10, 0);
   final _velocityMultiplierDelta = Vector2(1.5, 0);
@@ -72,17 +74,32 @@ class Background extends ParallaxComponent<SnufflesGame> {
     await _load();
   }
 
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (parallax == null) return;
+    switch (state) {
+      case PausedState.paused:
+        if (parallax!.baseVelocity == Vector2.zero()) return;
+        parallax!.baseVelocity = Vector2.zero();
+        break;
+      case PausedState.unpaused:
+        if (parallax!.baseVelocity != Vector2.zero()) return;
+        parallax!.baseVelocity = _baseVelocity;
+        break;
+      default:
+    }
+  }
+
   /// Start parallax
-  void start() {
-    assert(parallax != null);
-    if (parallax!.baseVelocity != Vector2.zero()) return;
-    parallax!.baseVelocity = _baseVelocity;
+  @override
+  void unpause() {
+    state = PausedState.unpaused;
   }
 
   /// Stop parallax
-  void stop() {
-    assert(parallax != null);
-    if (parallax!.baseVelocity == Vector2.zero()) return;
-    parallax!.baseVelocity = Vector2.zero();
+  @override
+  void pause() {
+    state = PausedState.paused;
   }
 }

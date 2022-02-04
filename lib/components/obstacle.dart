@@ -1,15 +1,16 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/geometry.dart';
+import 'package:flame_rive/flame_rive.dart';
 import 'package:flame_svg/flame_svg.dart';
+import 'package:rive/rive.dart';
 import 'package:snuffles_run/components/hero_component.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_state.dart';
+import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/models/obstacle_model.dart';
 
-class Obstacle extends SpriteComponent
+class Obstacle extends PositionComponent
     with HasGameRef<SnufflesGame>, HasHitboxes, Collidable {
   /// Delay factor is a value between 0 (no start delay) and 1
   Obstacle({
@@ -18,8 +19,8 @@ class Obstacle extends SpriteComponent
     this.speedScale = 1,
   }) {
     size = Vector2.all(50);
-    anchor = Anchor.bottomLeft;
-    // All Obstacles will be removed after 7 seconds
+    anchor = Anchor.bottomCenter;
+    // All Obstacles will be removed after some time
     add(RemoveEffect(delay: 7));
   }
 
@@ -42,31 +43,11 @@ class Obstacle extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    // Load random stone sprite images
-    // TODO: Load all game images once in main game
+    final filename = 'images/${playerData.scene}/obstacles/${model.filename}';
+    final svgInstance = await Svg.load(filename);
+    final obst = _ObstacleSvgComponent(svgInstance)..position += size / 2;
 
-    var numImages = 5;
-    var imageNames = <String>[];
-    var scene = gameRef.playerData.curScene.toString().split('.').last;
-    var path = '$scene/obstacles/';
-
-    for (var i = 0; i < numImages; i++) {
-      imageNames.add('${path}obst_${i + 1}.png');
-      await gameRef.images.load(imageNames[i]);
-    }
-    var r = Random().nextInt(numImages);
-    sprite = Sprite(gameRef.images.fromCache(imageNames[r]));
-
-    // try svg
-
-    final svgInstance =
-        await Svg.load('images/outdoor/obstacles/game_card.svg');
-    final rock = SvgComponent.fromSvg(svgInstance)
-      ..position = position
-      ..size = (Vector2.all(100))
-      ..anchor = Anchor.center;
-    add(rock);
-    // Set obstacle velocity
+    add(obst);
     _velocity += _velocityDelta * speedScale.toDouble();
 
     addHitbox(HitboxRectangle(relation: Vector2(0.8, 0.8)));
@@ -112,5 +93,28 @@ class Obstacle extends SpriteComponent
       }
     }
     super.update(dt);
+  }
+}
+
+class _ObstacleSvgComponent extends SvgComponent {
+  _ObstacleSvgComponent(svgInstance) : super.fromSvg(svgInstance) {
+    size = Vector2.all(90);
+    //position.x += size.x / 2;
+    anchor = Anchor.center;
+  }
+}
+
+class _ObstacleRiveComponent extends RiveComponent {
+  _ObstacleRiveComponent({required artboard})
+      : super(
+          artboard: artboard,
+          size: Vector2.all(330),
+        );
+
+  @override
+  Future<void> onLoad() async {
+    final controller = SimpleAnimation('Running');
+    artboard.addController(controller);
+    await super.onLoad();
   }
 }

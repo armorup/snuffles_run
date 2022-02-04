@@ -13,15 +13,3 @@ class ObstacleModel {
       _$ObstacleModelFromJson(json);
   Map<String, dynamic> toJson() => _$ObstacleModelToJson(this);
 }
-
-// class ObstaclesModelList {
-//   final List<ObstacleModel> obstacleModels;
-
-//   ObstaclesModelList({required this.obstacleModels});
-
-//   factory ObstaclesModelList.fromJson(List<dynamic> json) => ObstaclesModelList(
-//         obstacleModels: json
-//             .map((e) => ObstacleModel.fromJson(e as Map<String, dynamic>))
-//             .toList(),
-//       );
-// }
