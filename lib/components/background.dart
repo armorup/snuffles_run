@@ -8,10 +8,6 @@ import 'package:snuffles_run/models/background_model.dart';
 class Background extends ParallaxComponent<SnufflesGame> implements Pausable {
   Background(this.bgModel);
 
-  factory Background.initial() {
-    return Background(gameData.scenes.first.background);
-  }
-
   final BackgroundModel bgModel;
   PausedState state = PausedState.paused;
 
@@ -26,15 +22,6 @@ class Background extends ParallaxComponent<SnufflesGame> implements Pausable {
     await super.onLoad();
     // Load all parallax layers into cache from file
     await reset();
-  }
-
-  /// Load images into parallax
-  Future<void> _load() async {
-    parallax = await gameRef.loadParallax(
-      currentImages,
-      baseVelocity: _baseVelocity,
-      velocityMultiplierDelta: _velocityMultiplierDelta,
-    );
   }
 
   Future<void> reset() async {
@@ -54,6 +41,15 @@ class Background extends ParallaxComponent<SnufflesGame> implements Pausable {
 
     // Load into parallax
     await _load();
+  }
+
+  /// Load images into parallax
+  Future<void> _load() async {
+    parallax = await gameRef.loadParallax(
+      currentImages,
+      baseVelocity: _baseVelocity,
+      velocityMultiplierDelta: _velocityMultiplierDelta,
+    );
   }
 
   // Add next parallax layer

@@ -44,16 +44,6 @@ class PlayMode extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   FlameAudio.audioCache.play('sfx/Abstract1.mp3');
-                  context.go('/game');
-                },
-                child: const Text('Level Select'),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 3,
-              child: ElevatedButton(
-                onPressed: () {
-                  FlameAudio.audioCache.play('sfx/Abstract1.mp3');
                   context.go('/Endless');
                 },
                 child: const Text('Endless'),

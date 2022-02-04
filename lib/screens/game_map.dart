@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_data.dart';
+import 'package:snuffles_run/main.dart';
 
 class GameMap extends StatelessWidget {
   const GameMap({Key? key, required this.game}) : super(key: key);
@@ -10,8 +11,8 @@ class GameMap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final numScenes = game.playerData.scenes.length;
-    final scenes = game.playerData.scenes.keys
+    final numScenes = playerData.scenes.length;
+    final scenes = playerData.scenes.keys
         .map(
           (sceneType) => SceneCard(
             game: game,
@@ -64,8 +65,8 @@ class SceneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sceneName = sceneType.toString().split('.').last;
-    final unlocked = game.playerData.scenes[sceneType]!['unlocked'];
-    final highScore = game.playerData.scenes[sceneType]!['highscore'];
+    final unlocked = playerData.scenes[sceneType]!['unlocked'];
+    final highScore = playerData.scenes[sceneType]!['highscore'];
     final scoreHeader = unlocked ? 'High Score' : '';
     final scoreText = unlocked ? '$highScore' : '';
 
@@ -80,8 +81,7 @@ class SceneCard extends StatelessWidget {
         },
         child: Stack(
           children: [
-            SvgPicture.asset(
-                'assets/images/$sceneName/obstacles/game_card.svg'),
+            SvgPicture.asset('assets/images/$sceneName/game_card.svg'),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

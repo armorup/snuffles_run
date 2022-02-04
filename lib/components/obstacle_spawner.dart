@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:snuffles_run/components/scene.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/components/obstacle.dart';
-import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/models/obstacle_model.dart';
 
 enum SpawnState { spawning, notSpawning }
@@ -128,8 +127,8 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
   // muliple waves of obstacles
   void loadAll({required List<List<double>> waves}) {
     // Random obstacle model to load
-    var index = Random().nextInt(obstModels.length);
     for (int waveNum = 1; waveNum < waves.length; waveNum++) {
+      var index = Random().nextInt(obstModels.length);
       _curWaves.add(
         waves[waveNum]
             .map(

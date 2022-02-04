@@ -23,7 +23,7 @@ class GameLoader extends StatelessWidget {
       onWillPop: () async => false,
       child: GameWidget(
         // Create the game
-        game: SnufflesGame(playerData: playerData),
+        game: SnufflesGame(),
         loadingBuilder: (context) => const Material(
           child: Center(
             child: CircularProgressIndicator(),
@@ -40,7 +40,6 @@ class GameLoader extends StatelessWidget {
           );
         },
         overlayBuilderMap: {
-          'debug': (context, SnufflesGame game) => Debug(game: game),
           'map': (context, SnufflesGame game) => GameMap(game: game),
           'cutscene': (context, SnufflesGame game) => CutScene(game: game),
         },
@@ -51,12 +50,11 @@ class GameLoader extends StatelessWidget {
 
 /// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  SnufflesGame({required this.playerData});
+  SnufflesGame();
 
   @override
   bool get debugMode => true;
 
-  PlayerData playerData;
   double score = 0;
 
   late HeroComponent hero = HeroComponent(playerData.hero);
@@ -73,13 +71,10 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     await add(hero);
     await add(ScoreText());
 
-    // if (debugMode) {
-    //   //playerData = PlayerData();
-    //   overlays.add('debug');
-    // } else {
-    // Start the game
-    goScene(playerData.curScene);
-    // }
+    if (debugMode) {
+      playerData = PlayerData.debug();
+    }
+    overlays.add('map');
   }
 
   @override

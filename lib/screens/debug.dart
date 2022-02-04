@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_data.dart';
+import 'package:snuffles_run/main.dart';
 
 class Debug extends StatelessWidget {
   const Debug({Key? key, required this.game}) : super(key: key);
@@ -64,7 +65,7 @@ class SceneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sceneName = sceneType.toString().split('.').last;
-    final highScore = game.playerData.scenes[sceneType]?['highscore'];
+    final highScore = playerData.scenes[sceneType]?['highscore'];
     final text = '$sceneName: $highScore';
 
     return SizedBox(

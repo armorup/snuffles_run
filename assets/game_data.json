@@ -34,8 +34,8 @@
       "type": "forest",
       "obstacles": [
         {
-          "type": "gem",
-          "filename": "gem.png"
+          "type": "rock",
+          "filename": "rock.svg"
         }
       ],
       "background": {
@@ -72,18 +72,20 @@
         {
           "type": "flies",
           "filename": "flies.svg"
+        },
+        {
+          "type": "flowers",
+          "filename": "flowers.svg"
         }
       ],
       "background": {
         "filenames": [
           "01_ground.png",
           "02_petals.png",
-          "03_bushes.png",
-          "04_foregroundtrees.png",
-          "05_grass.png",
-          "06_backgroundtrees.png",
-          "07_clouds.png",
-          "08_sky.png"
+          "03_foreground.png",
+          "04_backgroundtrees.png",
+          "05_clouds.png",
+          "06_sky.png"
         ]
       }
     },
@@ -91,8 +93,8 @@
       "type": "kitchen",
       "obstacles": [
         {
-          "type": "bird",
-          "filename": "bird.svg"
+          "type": "butterfly",
+          "filename": "butterfly.svg"
         }
       ],
       "background": {

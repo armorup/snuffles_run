@@ -43,8 +43,12 @@ flutter:
     - assets/images/forest/
     - assets/images/forest/background/
     - assets/images/forest/obstacles/
+    - assets/images/backyard/
     - assets/images/backyard/background/
     - assets/images/backyard/obstacles/
+    - assets/images/kitchen/
+    - assets/images/kitchen/background/
+    - assets/images/kitchen/obstacles/
     - assets/audio/
     - assets/audio/sfx/
     - assets/audio/music/

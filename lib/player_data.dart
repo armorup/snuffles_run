@@ -21,6 +21,17 @@ class PlayerData {
     };
   }
 
+  PlayerData.debug(
+      {this.hero = HeroType.bunny, this.curScene = SceneType.outdoor}) {
+    scenes = {};
+    for (var sceneType in SceneType.values) {
+      scenes.putIfAbsent(
+        sceneType,
+        () => {'unlocked': true, 'highscore': 1},
+      );
+    }
+  }
+
   HeroType hero;
   SceneType curScene;
   late Map<SceneType, Map<String, dynamic>> scenes;

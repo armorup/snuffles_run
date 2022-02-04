@@ -10,6 +10,7 @@ import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/screens/achievements.dart';
 import 'package:snuffles_run/screens/endless.dart';
+import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
 import 'package:snuffles_run/screens/options.dart';
 import 'package:snuffles_run/screens/playmode.dart';
