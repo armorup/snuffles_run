@@ -34,7 +34,7 @@ class MainMenu extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   FlameAudio.audioCache.play('sfx/Abstract1.mp3');
-                  context.push('/mode');
+                  context.push('/playmode');
                 },
                 child: const Text('Play'),
               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/main.dart';
@@ -27,17 +26,6 @@ class GameMap extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                onPressed: () {
-                  game.overlays.remove('map');
-                  //game.overlays.add('main menu');
-                  context.go('/');
-                },
-                child: const Text('Exit to Main Menu'),
-              ),
-            ),
             Expanded(
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,

@@ -1,6 +1,7 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snuffles_run/main.dart';
 
 class PlayMode extends StatelessWidget {
   const PlayMode({Key? key}) : super(key: key);
@@ -56,7 +57,7 @@ class PlayMode extends StatelessWidget {
                   FlameAudio.audioCache.play('sfx/Abstract1.mp3');
                   context.pop();
                 },
-                child: const Text('Back'),
+                child: const Text('Exit'),
               ),
             ),
           ],

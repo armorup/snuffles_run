@@ -27,7 +27,7 @@ class PlayerData {
     for (var sceneType in SceneType.values) {
       scenes.putIfAbsent(
         sceneType,
-        () => {'unlocked': true, 'highscore': 1},
+        () => {'unlocked': true, 'highscore': 0},
       );
     }
   }

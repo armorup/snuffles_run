@@ -2,6 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:snuffles_run/components/scene.dart';
 import 'package:snuffles_run/components/game_text.dart';
 import 'package:snuffles_run/components/score_text.dart';
@@ -10,7 +11,6 @@ import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/game_state.dart';
 import 'package:snuffles_run/screens/cutscene.dart';
-import 'package:snuffles_run/screens/debug.dart';
 import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/main.dart';
 
@@ -23,7 +23,7 @@ class GameLoader extends StatelessWidget {
       onWillPop: () async => false,
       child: GameWidget(
         // Create the game
-        game: SnufflesGame(),
+        game: SnufflesGame(context: context),
         loadingBuilder: (context) => const Material(
           child: Center(
             child: CircularProgressIndicator(),
@@ -50,7 +50,8 @@ class GameLoader extends StatelessWidget {
 
 /// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  SnufflesGame();
+  SnufflesGame({required this.context});
+  BuildContext context;
 
   @override
   bool get debugMode => true;
@@ -74,7 +75,15 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     if (debugMode) {
       playerData = PlayerData.debug();
     }
-    overlays.add('map');
+
+    // If first time in this scene, play cut scene otherwise load the map
+    var highscore = playerData.scenes[playerData.curScene]?['highscore'] ?? 0;
+    if (highscore == 0) {
+      // show cutscene
+      overlays.add('cutscene');
+    } else {
+      overlays.add('map');
+    }
   }
 
   @override
@@ -83,13 +92,13 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
 
     if (scene.isLoaded) {
       GameState.state == PlayState.playing;
-    } else {
-      GameState.state == PlayState.loading;
     }
 
     if (GameState.state == PlayState.playing) {
       // Increase the score
       score += dt;
+    } else if (GameState.state == PlayState.gameover) {
+      // Do something
     }
   }
 
@@ -105,7 +114,8 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   /// Called by obstacle when the level is finished
   void onLevelComplete() async {
     add(GameText('Level Complete'));
-    goScene(playerData.curScene);
+
+    /// TODO: show cutscene
   }
 
   /// Called by obstacle when wave is finished
@@ -132,8 +142,9 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   }
 
   /// Go to the correct game scene
-  void goScene(SceneType sceneType) async {
+  Future<void> goScene(SceneType sceneType) async {
     playerData.curScene = sceneType;
+
     score = 0;
     await scene.loadScene(sceneType);
     scene.unpause();
@@ -148,11 +159,11 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     // camera.followComponent(snuffles);
     // camera.zoom = 2;
     // background.stop();
-    GameState.state = PlayState.paused;
+    GameState.state = PlayState.gameover;
     playerData.updateHighscore(scene.spawner.waveNumber);
     playerData.save();
     pauseEngine();
-    overlays.add('map');
+    context.go('/playmode');
   }
 
   // TODO: Fix this Load audio

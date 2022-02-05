@@ -30,20 +30,42 @@ class Achievements extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Achievements Page',
-              style: TextStyle(fontSize: 30),
+              'Achievements',
+              style: TextStyle(fontSize: 30, color: Colors.blue),
             ),
-            ElevatedButton(
-              onPressed: () => context.go('/'),
-              child: const Text('Back to Menu'),
-            ),
-            const SizedBox(height: 15),
             Expanded(
               child: GridView.count(
                 scrollDirection: Axis.horizontal,
                 crossAxisCount: 2,
-                children: svgs,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                padding: const EdgeInsets.all(20),
+                shrinkWrap: true,
+                children: svgs
+                    .map(
+                      (svg) => Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.amber),
+                          color: Colors.amber.shade200,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(30)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              offset: const Offset(3, 3),
+                            )
+                          ],
+                        ),
+                        child: svg,
+                      ),
+                    )
+                    .toList(),
               ),
+            ),
+            ElevatedButton(
+              onPressed: () => context.go('/'),
+              child: const Text('Back to Menu'),
             ),
           ],
         ),

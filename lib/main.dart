@@ -33,9 +33,14 @@ void main() async {
   gameData = GameData.fromJson(json);
 
   // Load saved data
-  String prefs = await SharedPreferences.getInstance()
-      .then((info) => info.get('data').toString());
-  playerData = PlayerData.fromJson(jsonDecode(prefs));
+  var prefs = await SharedPreferences.getInstance();
+  if (prefs.containsKey('data')) {
+    playerData = PlayerData.fromJson(
+      jsonDecode(prefs.get('data').toString()),
+    );
+  } else {
+    playerData = PlayerData();
+  }
 
   runApp(
     MaterialApp(
@@ -58,7 +63,7 @@ class App extends StatelessWidget {
         builder: (context, state) => const MainMenu(),
       ),
       GoRoute(
-        path: '/mode',
+        path: '/playmode',
         builder: (context, state) => const PlayMode(),
       ),
       GoRoute(
