@@ -9,6 +9,17 @@ class PlayMode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        child: const Icon(
+          Icons.arrow_back,
+          size: 50,
+          color: Colors.black,
+        ),
+        onPressed: () => context.go('/'),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -48,16 +59,6 @@ class PlayMode extends StatelessWidget {
                   context.go('/Endless');
                 },
                 child: const Text('Endless'),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 3,
-              child: ElevatedButton(
-                onPressed: () {
-                  FlameAudio.audioCache.play('sfx/Abstract1.mp3');
-                  context.pop();
-                },
-                child: const Text('Exit'),
               ),
             ),
           ],

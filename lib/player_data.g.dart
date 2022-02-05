@@ -11,17 +11,15 @@ PlayerData _$PlayerDataFromJson(Map<String, dynamic> json) => PlayerData(
           HeroType.bunny,
       curScene: $enumDecodeNullable(_$SceneTypeEnumMap, json['curScene']) ??
           SceneType.outdoor,
-    )..scenes = (json['scenes'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(
-            $enumDecode(_$SceneTypeEnumMap, k), e as Map<String, dynamic>),
-      );
+    )..scenes = (json['scenes'] as List<dynamic>)
+        .map((e) => SceneDetails.fromJson(e as Map<String, dynamic>))
+        .toList();
 
 Map<String, dynamic> _$PlayerDataToJson(PlayerData instance) =>
     <String, dynamic>{
       'hero': _$HeroTypeEnumMap[instance.hero],
       'curScene': _$SceneTypeEnumMap[instance.curScene],
-      'scenes':
-          instance.scenes.map((k, e) => MapEntry(_$SceneTypeEnumMap[k], e)),
+      'scenes': instance.scenes,
     };
 
 const _$HeroTypeEnumMap = {
@@ -34,3 +32,16 @@ const _$SceneTypeEnumMap = {
   SceneType.backyard: 'backyard',
   SceneType.kitchen: 'kitchen',
 };
+
+SceneDetails _$SceneDetailsFromJson(Map<String, dynamic> json) => SceneDetails(
+      sceneType: $enumDecode(_$SceneTypeEnumMap, json['sceneType']),
+      unlocked: json['unlocked'] as bool,
+      highscore: json['highscore'] as int,
+    );
+
+Map<String, dynamic> _$SceneDetailsToJson(SceneDetails instance) =>
+    <String, dynamic>{
+      'sceneType': _$SceneTypeEnumMap[instance.sceneType],
+      'unlocked': instance.unlocked,
+      'highscore': instance.highscore,
+    };

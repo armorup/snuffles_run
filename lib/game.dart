@@ -77,7 +77,8 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     }
 
     // If first time in this scene, play cut scene otherwise load the map
-    var highscore = playerData.scenes[playerData.curScene]?['highscore'] ?? 0;
+    var highscore = playerData.highscoreOf(sceneType: playerData.curScene);
+
     if (highscore == 0) {
       // show cutscene
       overlays.add('cutscene');

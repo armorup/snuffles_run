@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/main.dart';
+import 'package:snuffles_run/player_data.dart';
 
 class GameMap extends StatelessWidget {
   const GameMap({Key? key, required this.game}) : super(key: key);
@@ -11,11 +12,11 @@ class GameMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final numScenes = playerData.scenes.length;
-    final scenes = playerData.scenes.keys
+    final scenes = playerData.scenes
         .map(
-          (sceneType) => SceneCard(
+          (sceneDetail) => SceneCard(
             game: game,
-            sceneType: sceneType,
+            sceneType: sceneDetail.sceneType,
           ),
         )
         .toList();
@@ -53,8 +54,12 @@ class SceneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sceneName = sceneType.toString().split('.').last;
-    final unlocked = playerData.scenes[sceneType]!['unlocked'];
-    final highScore = playerData.scenes[sceneType]!['highscore'];
+    final unlocked = playerData.scenes
+        .firstWhere((scene) => scene.sceneType == sceneType)
+        .unlocked;
+    final highScore = playerData.scenes
+        .firstWhere((scene) => scene.sceneType == sceneType)
+        .highscore;
     final scoreHeader = unlocked ? 'High Score' : '';
     final scoreText = unlocked ? '$highScore' : '';
 

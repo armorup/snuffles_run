@@ -19,14 +19,14 @@ class OptionsMenu extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
-                onPressed: () => context.push('/achievements'),
+                onPressed: () => context.go('/achievements'),
                 child: const Text('Achievements'),
               ),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
-                onPressed: () => context.pop(),
+                onPressed: () => context.go('/'),
                 child: const Text('Back'),
               ),
             ),

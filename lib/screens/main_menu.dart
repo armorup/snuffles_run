@@ -8,6 +8,17 @@ class MainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
+      floatingActionButton: FloatingActionButton(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        onPressed: () => context.go('/options'),
+        child: const Icon(
+          Icons.settings,
+          size: 50,
+          color: Colors.black,
+        ),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -34,19 +45,9 @@ class MainMenu extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   FlameAudio.audioCache.play('sfx/Abstract1.mp3');
-                  context.push('/playmode');
+                  context.go('/playmode');
                 },
                 child: const Text('Play'),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 3,
-              child: ElevatedButton(
-                onPressed: () {
-                  FlameAudio.audioCache.play('sfx/Abstract2.mp3');
-                  context.push('/options');
-                },
-                child: const Text('Options'),
               ),
             ),
           ],

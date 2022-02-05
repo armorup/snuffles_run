@@ -10,7 +10,6 @@ import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/player_data.dart';
 import 'package:snuffles_run/screens/achievements.dart';
 import 'package:snuffles_run/screens/endless.dart';
-import 'package:snuffles_run/screens/game_map.dart';
 import 'package:snuffles_run/screens/main_menu.dart';
 import 'package:snuffles_run/screens/options.dart';
 import 'package:snuffles_run/screens/playmode.dart';
@@ -33,6 +32,7 @@ void main() async {
   gameData = GameData.fromJson(json);
 
   // Load saved data
+
   var prefs = await SharedPreferences.getInstance();
   if (prefs.containsKey('data')) {
     playerData = PlayerData.fromJson(
@@ -60,11 +60,11 @@ class App extends StatelessWidget {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const MainMenu(),
+        pageBuilder: (context, state) => Page(const MainMenu()),
       ),
       GoRoute(
         path: '/playmode',
-        builder: (context, state) => const PlayMode(),
+        pageBuilder: (context, state) => Page(const PlayMode()),
       ),
       GoRoute(
         path: '/game',
@@ -76,11 +76,11 @@ class App extends StatelessWidget {
       ),
       GoRoute(
         path: '/options',
-        builder: (context, state) => const OptionsMenu(),
+        pageBuilder: (context, state) => Page(const OptionsMenu()),
       ),
       GoRoute(
         path: '/achievements',
-        builder: (context, state) => const Achievements(),
+        pageBuilder: (context, state) => Page(const Achievements()),
       )
     ],
   );
