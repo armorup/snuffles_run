@@ -7,7 +7,18 @@ class OptionsMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        onPressed: () => context.go('/'),
+        child: const Icon(
+          Icons.arrow_back_ios_new_rounded,
+          size: 50,
+          color: Colors.blue,
+        ),
+      ),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,13 +32,6 @@ class OptionsMenu extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () => context.go('/achievements'),
                 child: const Text('Achievements'),
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 3,
-              child: ElevatedButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Back'),
               ),
             ),
           ],

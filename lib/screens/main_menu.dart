@@ -11,12 +11,12 @@ class MainMenu extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
       floatingActionButton: FloatingActionButton(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         onPressed: () => context.go('/options'),
         child: const Icon(
           Icons.settings,
           size: 50,
-          color: Colors.black,
+          color: Colors.blue,
         ),
       ),
       body: Center(

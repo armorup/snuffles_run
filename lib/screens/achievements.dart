@@ -24,6 +24,17 @@ class Achievements extends StatelessWidget {
     }
 
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        onPressed: () => context.go('/'),
+        elevation: 0,
+        child: const Icon(
+          Icons.arrow_back_ios_new,
+          size: 50,
+          color: Colors.blue,
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
@@ -62,10 +73,6 @@ class Achievements extends StatelessWidget {
                     )
                     .toList(),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () => context.go('/'),
-              child: const Text('Back to Menu'),
             ),
           ],
         ),

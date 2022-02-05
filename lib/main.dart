@@ -42,12 +42,24 @@ void main() async {
     playerData = PlayerData();
   }
 
+  var themeData = ThemeData(
+    brightness: Brightness.light,
+    primaryColor: Colors.lightBlue,
+    scaffoldBackgroundColor: Colors.white,
+    backgroundColor: Colors.blueAccent,
+    fontFamily: 'Georgia',
+    textTheme: const TextTheme(
+      headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+      headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+      bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+    ),
+  );
+
   runApp(
     MaterialApp(
       title: 'Snuffles Run',
-      themeMode: ThemeMode.system,
-      theme: FlexThemeData.light(scheme: FlexScheme.mandyRed),
-      darkTheme: FlexThemeData.dark(scheme: FlexScheme.mandyRed),
+      //themeMode: ThemeMode.system,
+      theme: themeData,
       home: App(),
     ),
   );
