@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/main.dart';
 import 'package:snuffles_run/models/obstacle_model.dart';
 import 'package:snuffles_run/models/scene_model.dart';
 
 class Achievements extends StatelessWidget {
-  const Achievements({Key? key}) : super(key: key);
+  const Achievements({Key? key, required this.game}) : super(key: key);
+  final SnufflesGame game;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,10 @@ class Achievements extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        onPressed: () => context.go('/'),
+        onPressed: () {
+          game.overlays.add('options');
+          game.overlays.remove('achievements');
+        },
         elevation: 0,
         child: const Icon(
           Icons.arrow_back_ios_new,

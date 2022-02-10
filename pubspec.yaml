@@ -37,9 +37,6 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/heros/
-    - assets/images/outdoor/
-    - assets/images/outdoor/background/
-    - assets/images/outdoor/obstacles/
     - assets/images/forest/
     - assets/images/forest/background/
     - assets/images/forest/obstacles/

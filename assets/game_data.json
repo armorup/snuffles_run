@@ -5,9 +5,16 @@
       "filename": "bunny.riv"
     }
   ],
+  "music": {
+    "menu": "music/paradise.mp3",
+    "game": "music/dark_beach.mp3"
+  },
+  "sfx": {
+    "click": "sfx/Abstract1.mp3"
+  },
   "scenes": [
     {
-      "type": "outdoor",
+      "type": "forest",
       "obstacles": [
         {
           "type": "rock",
@@ -27,30 +34,6 @@
           "09_distant_clouds1.png",
           "10_distant_clouds.png",
           "11_background.png"
-        ]
-      }
-    },
-    {
-      "type": "forest",
-      "obstacles": [
-        {
-          "type": "rock",
-          "filename": "rock.svg"
-        }
-      ],
-      "background": {
-        "filenames": [
-          "00_ground.png",
-          "01_Mist.png",
-          "02_Bushes.png",
-          "03_Particles.png",
-          "04_Forest.png",
-          "05_Particles.png",
-          "06_Forest.png",
-          "07_Forest.png",
-          "08_Forest.png",
-          "09_Forest.png",
-          "10_Sky.png"
         ]
       }
     },

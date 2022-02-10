@@ -1,5 +1,5 @@
 /// Describes the current state of the game.
-enum PlayState { paused, playing, gameover, loading }
+enum PlayState { paused, playing, inMenu, gameover, loading }
 
 /// State of the game to track global infomration.
 class GameState {
@@ -7,5 +7,7 @@ class GameState {
   static PlayState state = PlayState.loading;
 
   ///Toggle sounds
-  static bool playSounds = true;
+  static bool musicOn = true;
+
+  static bool sfxOn = true;
 }

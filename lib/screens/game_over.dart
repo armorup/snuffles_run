@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:snuffles_run/game.dart';
 
 class GameOverScreen extends StatelessWidget {
-  const GameOverScreen({Key? key}) : super(key: key);
+  const GameOverScreen({Key? key, required this.game}) : super(key: key);
+  final SnufflesGame game;
 
   @override
   Widget build(BuildContext context) {

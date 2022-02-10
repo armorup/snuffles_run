@@ -10,29 +10,28 @@ part 'player_data.g.dart';
 class PlayerData {
   HeroType hero;
   SceneType curScene;
-  late List<SceneDetails> scenes;
+  late Map<SceneType, SceneDetails> scenes;
 
   /// Constructor for brand new game
   PlayerData({
     this.hero = HeroType.bunny,
-    this.curScene = SceneType.outdoor,
+    this.curScene = SceneType.forest,
   }) {
-    scenes = [
-      SceneDetails(
-        sceneType: SceneType.outdoor,
+    scenes = {
+      SceneType.forest: SceneDetails(
         unlocked: true,
         highscore: 0,
       ),
-    ];
+    };
   }
 
   /// Constructor for debugging that unlocks every scene
   factory PlayerData.debug() {
     var pd = PlayerData();
     for (var sceneType in SceneType.values) {
-      pd.scenes.add(
-        SceneDetails(
-          sceneType: sceneType,
+      pd.scenes.putIfAbsent(
+        sceneType,
+        () => SceneDetails(
           unlocked: true,
           highscore: 0,
         ),
@@ -58,7 +57,7 @@ class PlayerData {
   String get scene => curScene.toString().split('.').last;
 
   int highscoreOf({required SceneType sceneType}) {
-    return scenes.firstWhere((scene) => scene.sceneType == sceneType).highscore;
+    return scenes[sceneType]?.highscore ?? 0;
   }
 
   /// Save the current data to shared prefs
@@ -68,55 +67,35 @@ class PlayerData {
     prefs.setString('data', json);
   }
 
-  /// Return unlocked scenes
-  List<SceneType> unlockedScenes() {
-    return scenes
-        .where((scene) => scene.unlocked)
-        .map((e) => e.sceneType)
-        .toList();
-  }
-
   /// Discover a new scene. Return true if it's a new discover
   bool discoverScene(SceneType sceneType) {
-    if (scenes.firstWhere((scene) => scene.sceneType == sceneType) == null) {
-      scenes.add(
-        SceneDetails(
-          sceneType: sceneType,
-          unlocked: false,
-          highscore: 0,
-        ),
-      );
-      return true;
+    if (scenes.containsKey(sceneType)) return false;
+    scenes.putIfAbsent(
+      sceneType,
+      () => SceneDetails(
+        unlocked: false,
+        highscore: 0,
+      ),
+    );
+    return true;
+  }
+
+  /// Unlock a scene
+  bool unlockScene(SceneType sceneType) {
+    if (scenes.containsKey(sceneType)) {
+      if (!scenes[sceneType]!.unlocked) {
+        scenes[sceneType]!.unlocked = true;
+        return true;
+      }
     }
     return false;
   }
 
-  bool isUnlocked(SceneType sceneType) {
-    return (scenes
-        .firstWhere((scene) => scene.sceneType == sceneType)
-        .unlocked);
-  }
-
-  void unlock(SceneType sceneType) {
-    scenes.firstWhere((scene) => scene.sceneType == sceneType).unlocked = true;
-  }
-
-  /// Unlock a scene. Return true if a scene was unlocked, false otherwise
-  bool unlockScene(SceneType sceneType) {
-    if (isUnlocked(sceneType)) {
-      return false;
-    }
-    unlock(sceneType);
-    return true;
-  }
-
   /// Update high score for current scene
   void updateHighscore(int score) {
-    final highscore =
-        scenes.firstWhere((scene) => scene.sceneType == curScene).highscore;
+    final highscore = scenes[curScene]?.highscore ?? 0;
     if (score > highscore) {
-      scenes.firstWhere((scene) => scene.sceneType == curScene).highscore =
-          score;
+      scenes[curScene]?.highscore = score;
     }
   }
 
@@ -126,11 +105,9 @@ class PlayerData {
 /// Player scene details
 @JsonSerializable()
 class SceneDetails {
-  SceneType sceneType;
   bool unlocked;
   int highscore;
   SceneDetails({
-    required this.sceneType,
     required this.unlocked,
     required this.highscore,
   });

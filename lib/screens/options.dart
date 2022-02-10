@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:snuffles_run/game.dart';
 
 class OptionsMenu extends StatelessWidget {
-  const OptionsMenu({Key? key}) : super(key: key);
+  const OptionsMenu({Key? key, required this.game}) : super(key: key);
+  final SnufflesGame game;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,10 @@ class OptionsMenu extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
-        onPressed: () => context.go('/'),
+        onPressed: () {
+          game.overlays.add('main_menu');
+          game.overlays.remove('options');
+        },
         child: const Icon(
           Icons.arrow_back_ios_new_rounded,
           size: 50,
@@ -30,7 +34,10 @@ class OptionsMenu extends StatelessWidget {
             SizedBox(
               width: MediaQuery.of(context).size.width / 3,
               child: ElevatedButton(
-                onPressed: () => context.go('/achievements'),
+                onPressed: () {
+                  game.overlays.add('achievements');
+                  game.overlays.remove('options');
+                },
                 child: const Text('Achievements'),
               ),
             ),

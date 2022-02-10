@@ -1,9 +1,10 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:snuffles_run/game.dart';
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({Key? key}) : super(key: key);
+  const MainMenu({Key? key, required this.game}) : super(key: key);
+  final SnufflesGame game;
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,10 @@ class MainMenu extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        onPressed: () => context.go('/options'),
+        onPressed: () {
+          game.overlays.add('options');
+          game.overlays.remove('main_menu');
+        },
         child: const Icon(
           Icons.settings,
           size: 50,
@@ -27,7 +31,7 @@ class MainMenu extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Snuffles Run',
-                style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                style: Theme.of(context).textTheme.headline6?.copyWith(
                   fontSize: 50,
                   color: Theme.of(context).primaryColor,
                   shadows: [
@@ -45,9 +49,21 @@ class MainMenu extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   FlameAudio.audioCache.play('sfx/Abstract1.mp3');
-                  context.go('/playmode');
+                  game.overlays.add('map');
+                  game.overlays.remove('main_menu');
                 },
                 child: const Text('Play'),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 3,
+              child: ElevatedButton(
+                onPressed: () {
+                  FlameAudio.audioCache.play('sfx/Abstract1.mp3');
+                  game.overlays.add('endless');
+                  game.overlays.remove('main_menu');
+                },
+                child: const Text('Endless'),
               ),
             ),
           ],

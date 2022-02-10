@@ -13,15 +13,3 @@ class HeroModel {
       _$HeroModelFromJson(json);
   Map<String, dynamic> toJson() => _$HeroModelToJson(this);
 }
-
-// class HeroModelList {
-//   final List<HeroModel> heros;
-
-//   HeroModelList({required this.heros});
-
-//   factory HeroModelList.fromJson(List<dynamic> json) => HeroModelList(
-//         heros: json
-//             .map((e) => HeroModel.fromJson(e as Map<String, dynamic>))
-//             .toList(),
-//       );
-// }

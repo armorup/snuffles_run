@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/game_data.dart';
 import 'package:snuffles_run/main.dart';
-import 'package:snuffles_run/player_data.dart';
 
 class GameMap extends StatelessWidget {
   const GameMap({Key? key, required this.game}) : super(key: key);
@@ -12,14 +11,7 @@ class GameMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final numScenes = playerData.scenes.length;
-    final scenes = playerData.scenes
-        .map(
-          (sceneDetail) => SceneCard(
-            game: game,
-            sceneType: sceneDetail.sceneType,
-          ),
-        )
-        .toList();
+    final scenes = playerData.scenes.keys.toList();
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -31,7 +23,10 @@ class GameMap extends StatelessWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: numScenes,
-                itemBuilder: (context, index) => scenes[index],
+                itemBuilder: (context, index) => SceneCard(
+                  game: game,
+                  sceneType: scenes[index],
+                ),
                 separatorBuilder: (context, index) => const SizedBox(
                   width: 10,
                 ),
@@ -54,12 +49,8 @@ class SceneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sceneName = sceneType.toString().split('.').last;
-    final unlocked = playerData.scenes
-        .firstWhere((scene) => scene.sceneType == sceneType)
-        .unlocked;
-    final highScore = playerData.scenes
-        .firstWhere((scene) => scene.sceneType == sceneType)
-        .highscore;
+    final unlocked = playerData.scenes[sceneType]!.unlocked;
+    final highScore = playerData.scenes[sceneType]!.highscore;
     final scoreHeader = unlocked ? 'High Score' : '';
     final scoreText = unlocked ? '$highScore' : '';
 

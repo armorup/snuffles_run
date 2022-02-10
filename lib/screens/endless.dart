@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:snuffles_run/game.dart';
 
 class Endless extends StatelessWidget {
-  const Endless({Key? key}) : super(key: key);
+  const Endless({Key? key, required this.game}) : super(key: key);
+  final SnufflesGame game;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,10 @@ class Endless extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: () => context.go('/'),
+              onPressed: () {
+                game.overlays.add('main_menu');
+                game.overlays.remove('endless');
+              },
               child: const Text('Back to Menu'),
             ),
           ],

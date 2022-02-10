@@ -65,9 +65,7 @@ class SceneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sceneName = sceneType.toString().split('.').last;
-    final highScore = playerData.scenes
-        .firstWhere((scene) => scene.sceneType == sceneType)
-        .highscore;
+    final highScore = playerData.scenes[playerData.curScene]?.highscore;
     final text = '$sceneName: $highScore';
 
     return SizedBox(
