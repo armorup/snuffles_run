@@ -3,7 +3,10 @@ import 'package:snuffles_run/game.dart';
 import 'package:snuffles_run/main.dart';
 
 class CutScene extends StatelessWidget {
-  const CutScene({Key? key, required this.game}) : super(key: key);
+  const CutScene({
+    Key? key,
+    required this.game,
+  }) : super(key: key);
   final SnufflesGame game;
 
   @override
@@ -16,7 +19,7 @@ class CutScene extends StatelessWidget {
       child: const Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: Text('Snuffles begins...'),
+          child: Text('cutscene'),
         ),
       ),
     );

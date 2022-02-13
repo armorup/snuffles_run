@@ -10,12 +10,14 @@ part 'player_data.g.dart';
 class PlayerData {
   HeroType hero;
   SceneType curScene;
+  bool endlessUnlocked;
   late Map<SceneType, SceneDetails> scenes;
 
   /// Constructor for brand new game
   PlayerData({
     this.hero = HeroType.bunny,
     this.curScene = SceneType.forest,
+    this.endlessUnlocked = false,
   }) {
     scenes = {
       SceneType.forest: SceneDetails(

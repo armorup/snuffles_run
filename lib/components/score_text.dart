@@ -16,7 +16,7 @@ class ScoreText extends TextComponent with HasGameRef<SnufflesGame> {
   final offset = 30; // offset from edget of screen
 
   @override
-  Future<void>? onLoad() {
+  Future<void> onLoad() async {
     super.onLoad();
     _text = '0';
 

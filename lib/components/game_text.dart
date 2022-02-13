@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:snuffles_run/game.dart';
 
 class GameText extends TextComponent with HasGameRef<SnufflesGame> {
-  GameText(String text) : super(text: text);
+  double duration;
+  GameText(String text, {this.duration = 2}) : super(text: text);
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -19,6 +20,6 @@ class GameText extends TextComponent with HasGameRef<SnufflesGame> {
     );
     anchor = Anchor.center;
     position = Vector2(gameRef.size.x * 0.5, gameRef.size.y * 0.4);
-    add(RemoveEffect(delay: 2));
+    add(RemoveEffect(delay: duration));
   }
 }

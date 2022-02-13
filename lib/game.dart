@@ -1,5 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame/timer.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:snuffles_run/components/scene.dart';
@@ -26,7 +27,7 @@ class GameLoader extends StatelessWidget {
       onWillPop: () async => false,
       child: GameWidget(
         // Create the game
-        game: SnufflesGame(context: context),
+        game: SnufflesGame(),
         loadingBuilder: (context) => const Material(
           child: Center(child: CircularProgressIndicator()),
         ),
@@ -54,16 +55,14 @@ class GameLoader extends StatelessWidget {
 
 /// The game
 class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
-  SnufflesGame({required this.context});
-  BuildContext context;
+  SnufflesGame();
+  Timer timer = Timer(0);
+  double score = 0;
+  late HeroComponent hero = HeroComponent(playerData.hero);
+  late Scene scene = Scene();
 
   @override
   bool get debugMode => true;
-
-  double score = 0;
-
-  late HeroComponent hero = HeroComponent(playerData.hero);
-  late Scene scene = Scene();
 
   @override
   Future<void> onLoad() async {
@@ -71,7 +70,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     GameState.state = PlayState.loading;
 
     loadAudio();
-
     await add(scene);
     await add(hero);
     await add(ScoreText());
@@ -89,7 +87,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     super.update(dt);
 
     // Ensure scene is loaded before playing the game
-    if (scene.isLoaded) {
+    if (scene.isLoaded && GameState.state == PlayState.playing) {
       GameState.state == PlayState.playing;
     }
 
@@ -97,12 +95,12 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
       // Increase the score
       score += dt;
     } else if (GameState.state == PlayState.gameover) {
-      // Do something
+      timer.update(dt);
     }
 
     if (GameState.musicOn && GameState.state == PlayState.inMenu) {
       if (!FlameAudio.bgm.isPlaying) {
-        FlameAudio.bgm.play(gameData.music.menu);
+        //FlameAudio.bgm.play(gameData.music.menu);
       }
     }
   }
@@ -121,6 +119,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     add(GameText('Level Complete'));
 
     /// TODO: show cutscene
+    overlays.add('cutscene');
   }
 
   /// Called by obstacle when wave is finished
@@ -155,34 +154,41 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     scene.unpause();
     resumeEngine();
     GameState.state = PlayState.playing;
-    FlameAudio.bgm.play(gameData.music.game);
+    //FlameAudio.bgm.play(gameData.music.game);
 
     add(GameText('Wave ${scene.spawner.waveNumber}'));
   }
 
   /// Called when bunny collides with obstacle
   void onGameOver() async {
-    // camera.followComponent(snuffles);
-    // camera.zoom = 2;
-    // background.stop();
-    GameState.state = PlayState.gameover;
+    camera.shake(duration: 0.3, intensity: 5);
+    scene.pause();
     playerData.updateHighscore(scene.spawner.waveNumber);
     playerData.save();
-    pauseEngine();
-    overlays.add('main_menu');
-    FlameAudio.bgm.play(gameData.music.menu);
+    add(GameText('Game Over', duration: 3));
+    timer = Timer(3, onTick: () {
+      GameState.state == PlayState.inMenu;
+      overlays.add('main_menu');
+      pauseEngine();
+    });
+    GameState.state = PlayState.gameover;
+
+    //FlameAudio.bgm.play(gameData.music.menu);
   }
 
   /// Load game audio
   void loadAudio() async {
-    FlameAudio.bgm.initialize();
-    await FlameAudio.audioCache.loadAll(
-        [gameData.music.game, gameData.music.menu, gameData.sfx.click]);
-    // await FlameAudio.bgm.loadAll([
-    //   gameData.music.game,
-    //   gameData.music.menu,
-    // ]);
-    FlameAudio.bgm.play(gameData.music.menu);
+    //FlameAudio.bgm.initialize();
+    //await FlameAudio.audioCache.loadAll(
+    //    [gameData.music.game, gameData.music.menu, gameData.sfx.click]);
+    //await FlameAudio.bgm.loadAll([
+    //  gameData.music.game,
+    //  gameData.music.menu,
+    //]);
+    //FlameAudio.bgm.play(gameData.music.menu);
     //FlameAudio.audioCache.loadAll([gameData.sfx.click]);
   }
 }
+
+//
+
