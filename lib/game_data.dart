@@ -6,7 +6,7 @@ part 'game_data.g.dart';
 
 enum HeroType { bunny }
 
-/// The scenario type
+/// The scenario type must be in this order
 /// Matches scene type name to folder that contains the parallax images
 enum SceneType {
   forest,

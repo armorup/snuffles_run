@@ -31,7 +31,7 @@ class ObstacleSpawner extends PositionComponent
 
   void _loadWaves() {
     int numWaves = 50;
-    int numObstacles = debugMode ? 1 : 2;
+    int numObstacles = 1;
     List<List<double>> waves = [];
     for (var i = 0; i < numWaves; i++) {
       // The first obstacle has zero delay
@@ -162,7 +162,6 @@ class Launcher extends PositionComponent with HasGameRef<SnufflesGame> {
       // Spawn the obstacle
       var obs = _curWave.removeAt(0);
       obs.isLastInWave = _curWave.isEmpty && _curWaves.isNotEmpty;
-      obs.isLastInLevel = _curWave.isEmpty && _curWaves.isEmpty;
       add(obs);
       _timer = 0;
     }

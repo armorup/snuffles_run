@@ -16,10 +16,13 @@ class CutScene extends StatelessWidget {
         await game.goScene(playerData.curScene);
         game.overlays.remove('cutscene');
       },
-      child: const Scaffold(
+      child: Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: Text('cutscene'),
+          child: Text(
+            'Play cutscene for ${playerData.scene}',
+            style: const TextStyle(fontSize: 20),
+          ),
         ),
       ),
     );

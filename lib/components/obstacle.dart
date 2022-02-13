@@ -38,8 +38,6 @@ class Obstacle extends PositionComponent
   double delayFactor;
   // true if this is the last obstacle in the wave
   bool isLastInWave = false;
-  // true if this is the last obstacle in the level
-  bool isLastInLevel = false;
 
   @override
   Future<void> onLoad() async {
@@ -56,7 +54,6 @@ class Obstacle extends PositionComponent
   }
 
   void increaseSpeed() => _velocity += _velocityDelta;
-
   void decreaseSpeed() => _velocity -= _velocityDelta;
 
   @override
@@ -83,15 +80,11 @@ class Obstacle extends PositionComponent
     // TODO: how to get global coordinates? Or create left edge collider
     var offset = 100;
     var leftEdge = gameRef.size.x + offset;
-    if (position.x < -leftEdge) {
-      if (isLastInLevel) {
-        isLastInLevel = false;
-        gameRef.onLevelComplete();
-      } else if (isLastInWave) {
-        isLastInWave = false;
-        gameRef.onWaveComplete();
-      }
+    if (position.x < -leftEdge && isLastInWave) {
+      isLastInWave = false;
+      gameRef.onWaveComplete();
     }
+
     super.update(dt);
   }
 }

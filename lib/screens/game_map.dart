@@ -13,12 +13,24 @@ class GameMap extends StatelessWidget {
     final numScenes = playerData.scenes.length;
     final scenes = playerData.scenes.keys.toList();
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          game.overlays.add('main_menu');
+          game.overlays.remove('map');
+        },
+        child: const Icon(
+          Icons.home,
+          size: 50,
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(25.0),
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(width: 70),
             Expanded(
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,

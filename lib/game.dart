@@ -62,7 +62,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
   late Scene scene = Scene();
 
   @override
-  bool get debugMode => true;
+  bool get debugMode => false;
 
   @override
   Future<void> onLoad() async {
@@ -78,6 +78,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
       playerData = PlayerData.debug();
     }
 
+    // Show the main menu
     overlays.add('main_menu');
     GameState.state = PlayState.inMenu;
   }
@@ -91,6 +92,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
       GameState.state == PlayState.playing;
     }
 
+    // Check for correct action for given GameState
     if (GameState.state == PlayState.playing) {
       // Increase the score
       score += dt;
@@ -98,6 +100,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
       timer.update(dt);
     }
 
+    // Check if audio is on or off
     if (GameState.musicOn && GameState.state == PlayState.inMenu) {
       if (!FlameAudio.bgm.isPlaying) {
         //FlameAudio.bgm.play(gameData.music.menu);
@@ -105,6 +108,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     }
   }
 
+  /// Hero jumps on tap
   @override
   void onTapDown(TapDownInfo info) {
     if (GameState.state == PlayState.playing) {
@@ -112,14 +116,6 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
         hero.jump();
       }
     }
-  }
-
-  /// Called by obstacle when the level is finished
-  void onLevelComplete() async {
-    add(GameText('Level Complete'));
-
-    /// TODO: show cutscene
-    overlays.add('cutscene');
   }
 
   /// Called by obstacle when wave is finished
@@ -134,29 +130,54 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     scene.spawner.startSpawning();
 
     // Display achievement message
-    if (scene.spawner.waveNumber == 5 &&
-        playerData.discoverScene(SceneType.backyard)) {
-      add(GameText('New Scene!'));
-    } else if (scene.spawner.waveNumber == 10 &&
-        playerData.unlockScene(SceneType.backyard)) {
-      add(GameText('Scene Unlocked!'));
-    } else {
-      add(GameText('Wave ${scene.spawner.waveNumber}'));
+    String text = '';
+    if (GameState.mode == GameMode.story) {
+      if (scene.spawner.waveNumber == 5 && discoverNextScene()) {
+        text = 'Scene Discovered!';
+      } else if (scene.spawner.waveNumber == 10 && unlockNextScene()) {
+        text = 'Scene Unlocked!';
+      } else {
+        text = 'Wave ${scene.spawner.waveNumber}';
+      }
+      add(GameText(text));
     }
+  }
+
+  bool discoverNextScene() {
+    int index = playerData.curScene.index + 1;
+    if (index < SceneType.values.length) {
+      SceneType nextScene = SceneType.values[index];
+      return playerData.discoverScene(nextScene);
+    }
+    return false;
+  }
+
+  bool unlockNextScene() {
+    int index = playerData.curScene.index + 1;
+    if (index < SceneType.values.length) {
+      SceneType nextScene = SceneType.values[index];
+      return playerData.unlockScene(nextScene);
+    }
+    return false;
   }
 
   /// Go to the correct game scene
   Future<void> goScene(SceneType sceneType) async {
+    assert(playerData.scenes.containsKey(sceneType));
     playerData.curScene = sceneType;
+    if (GameState.mode == GameMode.story && !playerData.cutscenePlayed) {
+      overlays.add('cutscene');
+      playerData.cutscenePlayed = true;
+    } else {
+      score = 0;
+      await scene.loadScene(sceneType);
+      scene.unpause();
+      resumeEngine();
+      GameState.state = PlayState.playing;
+      //FlameAudio.bgm.play(gameData.music.game);
 
-    score = 0;
-    await scene.loadScene(sceneType);
-    scene.unpause();
-    resumeEngine();
-    GameState.state = PlayState.playing;
-    //FlameAudio.bgm.play(gameData.music.game);
-
-    add(GameText('Wave ${scene.spawner.waveNumber}'));
+      add(GameText('Wave ${scene.spawner.waveNumber}'));
+    }
   }
 
   /// Called when bunny collides with obstacle
@@ -168,7 +189,7 @@ class SnufflesGame extends FlameGame with HasCollidables, TapDetector {
     add(GameText('Game Over', duration: 3));
     timer = Timer(3, onTick: () {
       GameState.state == PlayState.inMenu;
-      overlays.add('main_menu');
+      overlays.add('map');
       pauseEngine();
     });
     GameState.state = PlayState.gameover;

@@ -10,19 +10,24 @@ part 'player_data.g.dart';
 class PlayerData {
   HeroType hero;
   SceneType curScene;
-  bool endlessUnlocked;
+  late EndlessDetails endless;
   late Map<SceneType, SceneDetails> scenes;
 
   /// Constructor for brand new game
   PlayerData({
     this.hero = HeroType.bunny,
     this.curScene = SceneType.forest,
-    this.endlessUnlocked = false,
   }) {
+    endless = EndlessDetails(
+      highscore: 0,
+      unlocked: false,
+      startingPoint: 0,
+    );
     scenes = {
       SceneType.forest: SceneDetails(
         unlocked: true,
         highscore: 0,
+        cutscenePlayed: false,
       ),
     };
   }
@@ -36,6 +41,7 @@ class PlayerData {
         () => SceneDetails(
           unlocked: true,
           highscore: 0,
+          cutscenePlayed: false,
         ),
       );
     }
@@ -56,11 +62,16 @@ class PlayerData {
         : PlayerData();
   }
 
+  /// Get the name of the current scene
   String get scene => curScene.toString().split('.').last;
 
-  int highscoreOf({required SceneType sceneType}) {
-    return scenes[sceneType]?.highscore ?? 0;
-  }
+  /// Returns true if the current scene has already been played
+  bool get cutscenePlayed => scenes[curScene]!.cutscenePlayed;
+  set cutscenePlayed(bool played) => scenes[curScene]!.cutscenePlayed = played;
+
+  /// Return the highscore of the given scene
+  int highscoreOf({required SceneType sceneType}) =>
+      scenes[sceneType]?.highscore ?? 0;
 
   /// Save the current data to shared prefs
   void save() async {
@@ -69,7 +80,8 @@ class PlayerData {
     prefs.setString('data', json);
   }
 
-  /// Discover a new scene. Return true if it's a new discover
+  /// Discover a new scene. Return true if it's a new discover, false if
+  /// the scene was already discovered
   bool discoverScene(SceneType sceneType) {
     if (scenes.containsKey(sceneType)) return false;
     scenes.putIfAbsent(
@@ -77,6 +89,7 @@ class PlayerData {
       () => SceneDetails(
         unlocked: false,
         highscore: 0,
+        cutscenePlayed: false,
       ),
     );
     return true;
@@ -109,12 +122,31 @@ class PlayerData {
 class SceneDetails {
   bool unlocked;
   int highscore;
+  bool cutscenePlayed;
   SceneDetails({
     required this.unlocked,
     required this.highscore,
+    required this.cutscenePlayed,
   });
 
   factory SceneDetails.fromJson(Map<String, dynamic> json) =>
       _$SceneDetailsFromJson(json);
   Map<String, dynamic> toJson() => _$SceneDetailsToJson(this);
+}
+
+/// Player endless details
+@JsonSerializable()
+class EndlessDetails {
+  bool unlocked;
+  int highscore;
+  int startingPoint;
+  EndlessDetails({
+    required this.unlocked,
+    required this.highscore,
+    required this.startingPoint,
+  });
+
+  factory EndlessDetails.fromJson(Map<String, dynamic> json) =>
+      _$EndlessDetailsFromJson(json);
+  Map<String, dynamic> toJson() => _$EndlessDetailsToJson(this);
 }

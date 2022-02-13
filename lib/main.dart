@@ -27,6 +27,10 @@ void main() async {
   // Load saved data
 
   var prefs = await SharedPreferences.getInstance();
+
+  // TODO: remove this
+  prefs.clear();
+
   if (prefs.containsKey('data')) {
     playerData = PlayerData.fromJson(
       jsonDecode(prefs.get('data').toString()),
